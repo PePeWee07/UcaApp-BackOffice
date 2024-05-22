@@ -225,9 +225,8 @@
     <div class="right-side">
 
       <div class="test">
-        <div class="content" role="main" *ngIf="users | async as users">
-          <!-- <p *ngFor="let user of users">{{ user?.name |json }}</p> -->
-          <img src="#" alt="user" />
+        <div class="content">
+          <pre *ngFor="let user of users">{{ user|json }}</pre>
         </div>
         <div *ngFor="let poke of pokeRegister" class="content">
           <h5>Name: <pre>{{poke.name}}</pre></h5>

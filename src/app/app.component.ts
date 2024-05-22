@@ -14,9 +14,10 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 export class AppComponent implements OnInit {
   title = 'UcaApp';
 
-  public users!: Observable<any>;
   constructor(private userService: UserService){}
 
+  // public users!: Observable<any>;
+  users: Array<any> = [];
   getUsers(){
     this.userService.getUsers().subscribe((data: any) => {
       this.users = data;
@@ -36,7 +37,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.getUsers();
+    this.getUsers();
     this.getPokemon();
   }
 }

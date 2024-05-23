@@ -225,13 +225,25 @@
     <div class="right-side">
 
       <div class="test">
+
         <div class="content">
-          <pre *ngFor="let user of users">{{ user|json }}</pre>
+          @for (user of users; track user.id) {
+            <pre>{{ user|json }}</pre>
+          }
+          <!-- <pre *ngFor="let user of users">{{ user|json }}</pre> -->
         </div>
-        <div *ngFor="let poke of pokeRegister" class="content">
+
+        @for (poke of pokeRegister; track poke.id) {
+          <div class="content">
+            <h5>Name: <pre>{{poke.name}}</pre></h5>
+            <img src="{{poke.sprites.front_default}}" alt="pokemon" />
+          </div>
+        }
+        <!-- <div *ngFor="let poke of pokeRegister" class="content">
           <h5>Name: <pre>{{poke.name}}</pre></h5>
           <img src="{{poke.sprites.front_default}}" alt="pokemon" />
-        </div>
+        </div> -->
+
       </div>
 
     </div>

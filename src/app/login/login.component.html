@@ -1,0 +1,19 @@
+<div class="fondo">
+  <div class="row">
+    <div class="col-md-4"></div>
+
+    <form (ngSubmit)="login()">
+      <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" [(ngModel)]="loginDto.username" name="username" required>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" [(ngModel)]="loginDto.password" name="password" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+
+
+  </div>
+</div>

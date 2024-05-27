@@ -17,4 +17,8 @@ export class UserService {
   public getPokemon(numberId: number){
     return this.http.get(`https://pokeapi.co/api/v2/pokemon/${numberId}`);
   }
+
+  public getMethodtest(){
+    return this.http.post('http://localhost:8080/method/post',{});
+  }
 }

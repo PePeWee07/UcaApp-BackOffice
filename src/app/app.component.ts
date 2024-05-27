@@ -12,6 +12,8 @@ import { AsyncPipe, CommonModule } from '@angular/common';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+
+  myTitleInApp = 'UcaApp';
   title = 'UcaApp';
 
   constructor(private userService: UserService){}

@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importando los estilos necesarios de terceros */
+@import "../node_modules/@ng-select/ng-select/themes/default.theme.css";
+@import "ngx-lightbox/lightbox.css";
+
+/* Estilos globales de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos personalizados */
+datatable-body-cell {
+    display: flex !important;
+    align-items: center !important;
+}

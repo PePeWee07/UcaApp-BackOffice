@@ -1,8 +1,8 @@
-import { UserService } from './../services/user/user.service';
-import { AuthService } from '../services/auth/auth.service';
+import { UserService } from '../../core/services/user/user.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AsyncPipe, CommonModule } from '@angular/common';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 
 @Component({

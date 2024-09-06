@@ -10,8 +10,8 @@ import {
   withFetch,
 } from '@angular/common/http';
 
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { tokenInterceptor } from './interceptors/token.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { tokenInterceptor } from './core/interceptors/token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

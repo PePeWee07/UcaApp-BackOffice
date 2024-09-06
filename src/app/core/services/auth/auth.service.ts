@@ -1,4 +1,4 @@
-import { LoginDto, Usuario } from './../../models/User';
+import { LoginDto, Usuario } from '../../../models/User';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -11,7 +11,7 @@ export class AuthService {
   private _usuario: Usuario | null = null;
   private _token: string | null = null;
 
-  UrlAuth: string = 'http://localhost:8080/auth';
+  UrlAuth: string = 'http://localhost:8080/ucacue/auth';
 
   constructor(private http: HttpClient) {}
 

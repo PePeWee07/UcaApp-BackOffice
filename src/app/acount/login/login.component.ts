@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth/auth.service';
-import { LoginDto, Usuario } from '../models/User';
+import { Component, Inject, OnInit } from '@angular/core';
+import { LoginDto, Usuario } from '../../models/User';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class LoginComponent implements OnInit{
 
   constructor(
-    private _route: Router,
+    @Inject(Router) private route: Router,
     private authService: AuthService
     ) {}
 
@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit{
     this.authService.login(this.loginDto).subscribe( (res) => {
       this.loginDto.password=btoa(this.loginDto.password!);
       this.authService.guardarToken(res.jwt);
-      this._route.navigateByUrl('/welcom');
+      this.route.navigateByUrl('/welcom');
       console.log(res);
     }, (err) => {
       console.log(err);
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit{
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
-      this._route.navigateByUrl('/welcom');
+      this.route.navigateByUrl('/welcom');
     }
   }
 }

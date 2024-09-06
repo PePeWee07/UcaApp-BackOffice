@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { AuthService } from '../services/auth/auth.service';
-import { UserService } from '../services/user/user.service';
+import { UserService } from '../../core/services/user/user.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-not-access',

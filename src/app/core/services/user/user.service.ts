@@ -8,7 +8,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  url: String =  "http://localhost:8080/api"
+  url: String =  "http://localhost:8080/ucacue/api"
 
   public getUsers(){
     return this.http.get(`${this.url}/v1/users`);

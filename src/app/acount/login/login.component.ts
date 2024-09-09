@@ -1,38 +1,53 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { LoginDto, Usuario } from '../../models/User';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit {
+
+  loginForm!: FormGroup;  // FormGroup para manejar el formulario reactivo
 
   constructor(
-    @Inject(Router) private route: Router,
-    private authService: AuthService
-    ) {}
-
-  loginDto: LoginDto = new LoginDto();
-  login(){
-    this.authService.login(this.loginDto).subscribe( (res) => {
-      this.loginDto.password=btoa(this.loginDto.password!);
-      this.authService.guardarToken(res.jwt);
-      this.route.navigateByUrl('/welcom');
-      console.log(res);
-    }, (err) => {
-      console.log(err);
-    });
-  }
+    @Inject(Router) private router: Router,
+    private authService: AuthService,
+    private fb: FormBuilder   // FormBuilder para crear el formulario
+  ) {}
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
-      this.route.navigateByUrl('/welcom');
+      this.router.navigateByUrl('/welcom');
+    }
+    this.initForm();  // Inicializamos el formulario
+  }
+
+  initForm(): void {
+    this.loginForm = this.fb.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]]
+    });
+  }
+
+  login(): void {
+    if (this.loginForm.valid) {
+      const loginDto = this.loginForm.value;
+      this.authService.login(loginDto).subscribe(
+        (res) => {
+          loginDto.password = btoa(loginDto.password);
+          this.authService.guardarToken(res.jwt);
+          this.router.navigateByUrl('/welcom');
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     }
   }
 }

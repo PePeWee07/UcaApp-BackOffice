@@ -2,7 +2,7 @@ import { LoginDto, Usuario } from '../../../models/User';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -54,7 +54,7 @@ export class AuthService {
   obtenerDatosToken(accessToken: string): any {
     if (accessToken != null) {
       const payload = JSON.parse(atob(accessToken.split('.')[1]));
-      //console.log("obtenerDatoToken (stringified): " + JSON.stringify(payload));
+      // console.log("obtenerDatoToken (stringified): " + JSON.stringify(payload));
       return payload;
     }
     return null;
@@ -83,14 +83,26 @@ export class AuthService {
   }
 
   // Cierra sesión
-  logout(): void {
-    this._token = null;
-    this._usuario = null;
-    sessionStorage.clear();
-    localStorage.clear();
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
+  logout() {
+    const urlEndpoint = `${this.UrlAuth}/log-out`;
+    const httpHeaders = new HttpHeaders({
+      'Content-Length': 0,
+    });
+
+    return this.http.post<any>(urlEndpoint, {}, { headers: httpHeaders }).pipe(
+      // limpieza de almacenamiento después de recibir respuesta del servidor
+      tap(() => {
+        this._token = null;
+        this._usuario = null;
+        sessionStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        localStorage.clear();
+        console.log('Logout exitoso y token invalidado');
+      })
+    );
   }
+
 
   // Verifica si el usuario tiene el rol de administrador
   capturoRol(): boolean {

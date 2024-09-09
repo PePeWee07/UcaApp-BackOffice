@@ -17,9 +17,14 @@ export class NotAccessComponent {
     private authService: AuthService
     ) {}
 
-  logout(){
-    this.authService.logout()
-    this._route.navigateByUrl("/login")
-  }
+    logout(){
+      this.authService.logout().subscribe( (res) => {
+        console.log(res)
+        this._route.navigateByUrl("/login")
+      }, (err) => {
+        console.log(err)
+        this._route.navigateByUrl("/login")
+      })
+    }
 
 }

@@ -9,10 +9,18 @@ import { SidebarService } from '../../core/services/component/sidebar-service.se
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  sidebarVisible: boolean = true;
   constructor(private sidebarService: SidebarService) {}
 
   toggleSidebar() {
     this.sidebarService.toggleSidebar();  // Llama al servicio para alternar el sidebar
   }
+
+  ngOnInit() {
+    this.sidebarService.sidebarVisible$.subscribe((isVisible) => {
+      this.sidebarVisible = isVisible;
+    });
+  }
+
 
 }

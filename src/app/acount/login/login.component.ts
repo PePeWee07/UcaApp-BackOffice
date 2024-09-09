@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
         (res) => {
           loginDto.password = btoa(loginDto.password);
           this.authService.guardarToken(res.jwt);
-          this.router.navigateByUrl('/welcom');
+          this.router.navigateByUrl('/dashboard');
         },
         (err) => {
           console.log(err);

@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { CommonModule } from '@angular/common';
+import { AlertService } from '../../core/services/component/alert.service';
+import { AuthorizationError } from '../../models/errors/authorizationError';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +21,7 @@ export class LoginComponent implements OnInit {
   constructor(
     @Inject(Router) private router: Router,
     private authService: AuthService,
+    private alertService: AlertService,
     private fb: FormBuilder   // FormBuilder para crear el formulario
   ) {}
 
@@ -43,9 +47,12 @@ export class LoginComponent implements OnInit {
           loginDto.password = btoa(loginDto.password);
           this.authService.guardarToken(res.jwt);
           this.router.navigateByUrl('/dashboard');
+          this.alertService.showToast('success', 'Logged in successfully');
         },
-        (err) => {
-          console.log(err);
+        (err: HttpErrorResponse) => {
+          const serverError = err.error as AuthorizationError;
+          const errorMessage = serverError.message || 'An error occurred during login';
+          this.alertService.showToast('error', errorMessage);
         }
       );
     }

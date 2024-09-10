@@ -12,24 +12,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((e) => {
       if (e.status === 401) {
-        if (authService.isAuthenticated()) {
-          authService.logout();
-          localStorage.clear();
-        }
-        router.navigate(['/login']); // USER NOT AUTHENTICATED
-        console.log('No Access this resource', 'warning');
-      }
-      if (e.status === 200) {
-        console.log('The request was successful', 'success');
-      }
-      if (e.status === 423) {
-        //authService.logout();
+        console.log('You are not authenticated', 'warning');
       }
       if (e.status === 500) {
         console.log('An error occurred', 'We are working on it', 'warning');
+        alert('An error occurred, we are working on it');
       }
       if (e.status === 403) {
-        console.log('Hello, you do not have access to this resource!')
+        alert('Hello, you do not have access to this resource!')
         router.navigate(['/welcom']);
       }
       return throwError(e);

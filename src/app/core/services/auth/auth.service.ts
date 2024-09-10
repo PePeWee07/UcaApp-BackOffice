@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { JwtPayload } from '../../../models/JwtPayload';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private _usuario: Usuario | null = null;
+  private _jwtData: JwtPayload | null = null;
   private _token: string | null = null;
 
   UrlAuth: string = 'http://localhost:8080/ucacue/auth';
@@ -36,8 +37,8 @@ export class AuthService {
           const token = response.jwt;
           if (token) {
             this.guardarToken(token);
-            this._usuario = this.obtenerDatosToken(token);
-            localStorage.setItem('usuario', JSON.stringify(this._usuario));
+            this._jwtData = this.obtenerDatosToken(token);
+            localStorage.setItem('usuario', JSON.stringify(this._jwtData));
           }
           return response;
         })
@@ -93,12 +94,11 @@ export class AuthService {
       // limpieza de almacenamiento después de recibir respuesta del servidor
       tap(() => {
         this._token = null;
-        this._usuario = null;
+        this._jwtData = null;
         sessionStorage.clear();
         localStorage.removeItem('token');
         localStorage.removeItem('usuario');
         localStorage.clear();
-        console.log('Logout exitoso y token invalidado');
       })
     );
   }
@@ -113,23 +113,28 @@ export class AuthService {
 
   // Comprueba si el usuario tiene un rol específico
   hasRole(role: any): boolean {
-    if (this.usuario.authorities!.includes(role)) {
+    if (this.dataPayload.authorities.includes(role)) {
       return true;
     }
     return false;
   }
 
-  // Obtiene el usuario activo
-  public get usuario(): Usuario {
-    if (this._usuario != null) {
-      return this._usuario;
-    } else if (
-      this._usuario == null &&
-      localStorage.getItem('usuario') != null
-    ) {
-      this._usuario = JSON.parse(localStorage.getItem('usuario')!) as Usuario;
-      return this._usuario;
+  // Obtiene el usuario activo del payload token
+  public get dataPayload(): JwtPayload {
+    if (this._jwtData != null) {
+      return this._jwtData;
+    } else if (this._jwtData == null && localStorage.getItem('usuario') != null) {
+      this._jwtData = JSON.parse(localStorage.getItem('usuario')!) as JwtPayload;
+      return this._jwtData;
     }
-    return new Usuario();
+    return {
+      iss: '',
+      sub: 'anonymous@email.com',
+      authorities: '',
+      iat: 0,
+      exp: 0,
+      jti: '',
+      nbf: 0,
+    };
   }
 }

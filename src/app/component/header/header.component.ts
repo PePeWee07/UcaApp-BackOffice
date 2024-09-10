@@ -22,6 +22,7 @@ export class HeaderComponent {
   ) {}
 
   isDropdownOpen = false;  // estado del dropdown
+  email = this.authService.dataPayload.sub;  // email del usuario
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -35,6 +36,7 @@ export class HeaderComponent {
     this.sidebarService.sidebarVisible$.subscribe((isVisible) => {
       this.sidebarVisible = isVisible;
     });
+    console.log('Email:',this.authService.dataPayload.sub);
   }
 
   SingOut(){

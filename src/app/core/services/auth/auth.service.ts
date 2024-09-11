@@ -124,7 +124,8 @@ export class AuthService {
   public get dataPayload(): JwtPayload {
     if (this._jwtData != null) {
       return this._jwtData;
-    } else if (this._jwtData == null && localStorage.getItem('usuario') != null) {
+    } else if (this._jwtData == null && typeof window !== 'undefined' && localStorage.getItem('usuario') != null) {
+      // Solo accede a localStorage si estamos en el navegador
       this._jwtData = JSON.parse(localStorage.getItem('usuario')!) as JwtPayload;
       return this._jwtData;
     }

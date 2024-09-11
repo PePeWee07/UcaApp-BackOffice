@@ -36,7 +36,6 @@ export class HeaderComponent {
     this.sidebarService.sidebarVisible$.subscribe((isVisible) => {
       this.sidebarVisible = isVisible;
     });
-    console.log('Email:',this.authService.dataPayload.sub);
   }
 
   SingOut(){

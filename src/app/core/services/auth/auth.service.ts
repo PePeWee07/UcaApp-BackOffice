@@ -1,4 +1,4 @@
-import { LoginDto, Usuario } from '../../../models/User';
+import { LoginDto, Usuario } from '../../../models/Usuario';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';

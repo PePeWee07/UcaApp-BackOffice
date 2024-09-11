@@ -11,7 +11,7 @@ export class UserAdminService {
   constructor(private http: HttpClient) { }
 
   //* Paginacion de Usuarios
-  getUsers(page: number){
-    return this.http.get<any>(`${this.Url}/v2/manager/users/page/${page}`);
+  getUsers(parameters: string){
+    return this.http.get<any>(`${this.Url}/v2/manager/users/page/${parameters}`);
   }
 }

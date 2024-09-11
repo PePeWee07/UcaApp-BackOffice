@@ -16,10 +16,15 @@ export class TablesComponent {
   ) {}
 
   user: any = [];
+
+  //Parametros de paginacion
   page: number = 0;
+  pageSize: number = 10;
+  sortBy: string = 'id';
+  direction: string = 'asc';
 
   getUsers(){
-    this.adminService.getUsers(this.page).subscribe(
+    this.adminService.getUsers(`${this.page}?pageSize=${this.pageSize}&sortBy=${this.sortBy}&direction=${this.direction}`).subscribe(
       {
         next: (res) => {
           this.user = res;

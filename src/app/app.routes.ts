@@ -6,28 +6,30 @@ import { NotAccessComponent } from './pages/not-access/not-access.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: 'notAccess', component: NotAccessComponent },
   {
     path: '',
     loadComponent: () => import('./pages/layout/layout.component'),
-    canActivate: [authRoleGuard, authGuard],
     children: [
+      { path: 'notAccess', component: NotAccessComponent },
       {
         path: 'dashboard',
-        loadComponent: () => import('./pages/dashboard/dashboard.component')
+        loadComponent: () => import('./pages/dashboard/dashboard.component'),
+        canActivate: [authRoleGuard, authGuard],
       },
       {
         path: 'profile',
-        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [authRoleGuard, authGuard],
       },
       {
         path: 'tables',
-        loadComponent: () => import('./pages/tables/tables.component').then(m => m.TablesComponent)
+        loadComponent: () => import('./pages/tables/tables.component').then(m => m.TablesComponent),
+        canActivate: [authRoleGuard, authGuard],
       },
       {
         path: '',
         redirectTo: 'dashboard',
-        pathMatch: 'full'
+        pathMatch: 'full',
       }
     ]
   },

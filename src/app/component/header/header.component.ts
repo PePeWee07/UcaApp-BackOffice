@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SidebarService } from '../../core/services/component/sidebar-service.service';
+import { SidebarService } from '../../core/services/component/sidebar.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { AlertService } from '../../core/services/component/alert.service';

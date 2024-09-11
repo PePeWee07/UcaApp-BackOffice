@@ -16,6 +16,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+  // ! No Disponible
   register(usuario: Usuario): Observable<any> {
     const params = JSON.stringify(usuario);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });

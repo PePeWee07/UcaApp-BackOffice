@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { SidebarService } from '../../core/services/component/sidebar-service.service';
+import { SidebarService } from '../../core/services/component/sidebar.service';
 
 @Component({
   selector: 'app-sidebar',

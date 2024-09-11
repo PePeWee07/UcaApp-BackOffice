@@ -18,20 +18,5 @@ export class NotAccessComponent {
     private alertService: AlertService
     ) {}
 
-    logout() {
-      this.authService.logout().subscribe(
-        {
-          next: (res) => {
-            this.alertService.showToast('success', res.message);
-            this._route.navigateByUrl("/login")
-          },
-          error: (err) => {
-            console.log(err)
-            this.alertService.showToast('error', err.error.message);
-            this._route.navigateByUrl("/login")
-          }
-        }
-      );
-    }
 
 }

@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
-import { AlertService } from '../../core/services/component/alert.service';
+import { AlertToastService } from '../../core/services/component/alert-toast.service';
 
 @Component({
   selector: 'app-not-access',
@@ -15,7 +15,7 @@ export class NotAccessComponent {
   constructor(
     private _route: Router,
     private authService: AuthService,
-    private alertService: AlertService
+    @Inject(AlertToastService) private alertService: AlertToastService
     ) {}
 
 

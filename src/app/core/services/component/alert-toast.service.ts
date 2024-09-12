@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 @Injectable({
   providedIn: 'root'
 })
-export class AlertService {
+export class AlertToastService {
   constructor() {}
 
   showToast(icon: 'success' | 'error' | 'warning' | 'info', title: string) {

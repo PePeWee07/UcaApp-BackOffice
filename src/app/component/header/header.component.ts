@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SidebarService } from '../../core/services/component/sidebar.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../core/services/component/alert.service';
+import { AlertToastService } from '../../core/services/component/alert-toast.service';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +18,7 @@ export class HeaderComponent {
     private sidebarService: SidebarService,
     private authService: AuthService,
     private _route: Router,
-    private alertService: AlertService
+    private alertToastService: AlertToastService
   ) {}
 
   isDropdownOpen = false;  // estado del dropdown
@@ -42,12 +42,12 @@ export class HeaderComponent {
     this.authService.logout().subscribe(
       {
         next: (res) => {
-          this.alertService.showToast('success', res.message);
+          this.alertToastService.showToast('success', res.message);
           this._route.navigateByUrl("/login")
         },
         error: (err) => {
           console.log(err)
-          this.alertService.showToast('error', err.error.message);
+          this.alertToastService.showToast('error', err.error.message);
           this._route.navigateByUrl("/login")
         }
       }

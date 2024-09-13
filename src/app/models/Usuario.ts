@@ -36,7 +36,7 @@ export interface Role {
   createdDate?:           Date | null;
   lastModifiedBy?:        null | string;
   lastModifiedDate?:      Date | null;
-  id:                    number;
+  id:                     number;
   name:                   string;
   permissionList:         Authority[];  // Para GET
   permissionsIds?:        number[];     // Para POST

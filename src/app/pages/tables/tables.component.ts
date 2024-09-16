@@ -1,16 +1,16 @@
 import { Component, Inject } from '@angular/core';
 import { UserAdminService } from '../../core/services/user-admin/user-admin.service';
-import { Columns, Config, DefaultConfig } from 'ngx-easy-table';
-import { data, Company } from '../../models/data';
-import { TableModule } from 'ngx-easy-table';
 import { Usuario } from '../../models/Usuario';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
 import { UsuarioPageable } from '../../models/UsuarioPageable';
+import { FormsModule } from '@angular/forms';
+import { debounceTime, Subject } from 'rxjs';
+
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [TableModule],
+  imports: [ FormsModule ],
   templateUrl: './tables.component.html',
   styleUrl: './tables.component.scss'
 })
@@ -29,13 +29,32 @@ export class TablesComponent {
   pageSize: number = 5;
   sortBy: string = 'id';
   direction: string = 'asc';
-  numberOfElements: number = 0;
+  totalElements: number = 0;
   pagesArray: number[] = [];
   totalPages: number = 5;
+  searchText: string = '';
+  numberOfElements: number = 0; //? No se usa Actualmente numero de elementos por pagina
+  searchSubject: Subject<string> = new Subject<string>();
+  selectedField: string = 'email';
 
-  url:string = `${this.page}?pageSize=${this.pageSize}&sortBy=${this.sortBy}&direction=${this.direction}`;
+  onSearch(event: KeyboardEvent) {
+    this.searchSubject.next((event.target as HTMLInputElement).value); // Emitir el valor de búsqueda
+  }
+
+  // Obtener el filtro de búsqueda
+  get searchFilter(): string {
+    if (this.searchText) {
+      return `&${this.selectedField}=${this.searchText}`;
+    }
+    return '';
+  }
+
+  get url(): string {
+    return `${this.page}?pageSize=${this.pageSize}&sortBy=${this.sortBy}&direction=${this.direction}${this.searchFilter}`;
+  }
 
   getUsers(){
+    console.log("URL: ",this.url);
     this.adminService.getUsers(this.url).subscribe(
       {
         next: (res: UsuarioPageable) => {
@@ -43,8 +62,9 @@ export class TablesComponent {
           this.userList = res.content;
           //Datos de paginacion
           this.page = res.pageable.pageNumber;
-          this.numberOfElements = res.numberOfElements;
+          this.totalElements = res.totalElements;
           this.totalPages = res.totalPages;
+          this.numberOfElements = res.numberOfElements;
 
           //Array de paginas
           this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
@@ -54,64 +74,57 @@ export class TablesComponent {
             const usuarioKeysDynamic = Object.keys(this.userList[0]) as (keyof Usuario)[];
             this.keysUser = usuarioKeysDynamic ? usuarioKeysDynamic : [];
           } else {
-            this.keysUser = [''];
+            this.keysUser = ['None'];
           }
         },
-        error: (err) => {
-          this.alertToast.showToast('error', err.error.message);
+        error: (err: any) => {
+          this.alertToast.showToast('error', err.error.errors[0].error);
         }
       }
     );
   }
 
   ngOnInit(): void {
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
+      this.getUsers(); // Llama al método de búsqueda cuando el usuario deja de escribir
+    });
+
     this.getUsers();
   }
 
   // Métodos para manejar los cambios en las opciones seleccionadas
   onPageSizeChange(value: string) {
     this.pageSize = parseInt(value, 10);
-    console.log('Page size changed:', this.pageSize);
-    this.getData();
+    this.getUsers();
   }
 
   onSortByChange(value: string) {
     this.sortBy = value;
-    console.log('Sort by changed:', this.sortBy);
-    this.getData();
+    this.getUsers();
   }
 
   onDirectionChange(value: string) {
     this.direction = value.toLowerCase();
-    console.log('Direction changed:', this.direction);
-    this.getData();
-  }
-
-  // Simula la obtención de datos
-  getData() {
-    //console.log(`Fetching data with N° Page: ${this.page} ,Page Size: ${this.pageSize}, Sort By: ${this.sortBy}, Direction: ${this.direction}`);
-    this.url =`${this.page}?pageSize=${this.pageSize}&sortBy=${this.sortBy}&direction=${this.direction}`
     this.getUsers();
   }
 
    // Métodos de paginación
-   previousPage() {
+  previousPage() {
     if (this.page > 0) {
       this.page--;
-      this.getData();
+      this.getUsers();
     }
   }
 
   nextPage() {
     if (this.page < this.totalPages - 1) {
       this.page++;
-      this.getData();
+      this.getUsers();
     }
   }
 
   goToPage(page: number) {
     this.page = page;
-    this.getData();
+    this.getUsers();
   }
-
 }

@@ -47,12 +47,12 @@ export class LoginComponent implements OnInit {
           loginDto.password = btoa(loginDto.password);
           this.authService.guardarToken(res.jwt);
           this.router.navigateByUrl('/dashboard');
-          this.alertToastService.showToast('success', 'Logged in successfully');
+          this.alertToastService.showToast('success', 'Logged in successfully', 1500);
         },
         (err: HttpErrorResponse) => {
           const serverError = err.error as AuthorizationError;
           const errorMessage = serverError.message || 'An error occurred during login';
-          this.alertToastService.showToast('error', errorMessage);
+          this.alertToastService.showToast('error', errorMessage, 3000);
         }
       );
     }

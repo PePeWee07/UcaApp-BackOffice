@@ -42,12 +42,12 @@ export class HeaderComponent {
     this.authService.logout().subscribe(
       {
         next: (res) => {
-          this.alertToastService.showToast('success', res.message);
+          this.alertToastService.showToast('success', res.message, 1500);
           this._route.navigateByUrl("/login")
         },
         error: (err) => {
           console.log(err)
-          this.alertToastService.showToast('error', err.error.message);
+          this.alertToastService.showToast('error', err.error.message, 3000);
           this._route.navigateByUrl("/login")
         }
       }

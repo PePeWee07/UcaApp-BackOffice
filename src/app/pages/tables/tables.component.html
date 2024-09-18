@@ -282,7 +282,7 @@
       <!-- Page Size -->
       <div class="relative">
         <select
-        (change)="onPageSizeChange($any($event.target).value)"
+          (change)="onPageSizeChange($any($event.target).value)"
           class="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
         >
           <option value="5">5</option>
@@ -306,13 +306,13 @@
       <!-- SortBy -->
       <div class="relative">
         <select
-        (change)="onSortByChange($any($event.target).value)"
+          (change)="onSortByChange($any($event.target).value)"
           class="h-full border-t block appearance-none w-full sm:rounded-r-none sm:border-r-1 border-r border-b bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
         >
-        @for (item of keysUser; track $index) {
-          <option>{{item}}</option>
+          @for (item of keysUser; track $index) {
+          <option>{{ item }}</option>
 
-        }
+          }
         </select>
         <div
           class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
@@ -331,9 +331,9 @@
       <!-- Direction -->
       <div class="relative">
         <select
-        (change)="onDirectionChange($any($event.target).value)"
+          (change)="onDirectionChange($any($event.target).value)"
           class="h-full rounded-r border-t block appearance-none w-full sm:rounded-r-none sm:border-r-0 border-r border-b bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
-          >
+        >
           <option value="asc">Asc</option>
           <option value="desc">Desc</option>
         </select>
@@ -354,43 +354,48 @@
     </div>
     <!-- Search -->
     <!-- Search -->
-<div class="block relative">
-  <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
-    <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
-      <path
-        d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"
-      ></path>
-    </svg>
-  </span>
-  <input
-    class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
-    type="text"
-    [(ngModel)]="searchText"
-    placeholder="Search users..."
-    (keyup)="onSearch($event)"
-    (keyup.enter)="getUsers()"
-  />
-</div>
+    <div class="block relative">
+      <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
+          <path
+            d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"
+          ></path>
+        </svg>
+      </span>
+      <input
+        class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="Search users..."
+        (keyup)="onSearch($event)"
+        (keyup.enter)="getUsers()"
+      />
+    </div>
 
-  <!-- Search Field Selector -->
-  <div class="mt-2">
-    <select
-      class="border px-2 py-1 rounded"
-      [(ngModel)]="selectedField"
-      (change)="getUsers()"
+    <!-- Search Field Selector -->
+    <div class="mt-2">
+      <select
+        class="border px-2 py-1 rounded"
+        [(ngModel)]="selectedField"
+        (change)="getUsers()"
+      >
+        <option value="id">ID</option>
+        <option value="name">Name</option>
+        <option value="lastName">Last Name</option>
+        <option value="email">Email</option>
+        <option value="phoneNumber">Phone Number</option>
+        <option value="address">Address</option>
+        <option value="dni">DNI</option>
+      </select>
+    </div>
+
+    <button
+      (click)="getUsers()"
+      class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
     >
-      <option value="id">ID</option>
-      <option value="name">Name</option>
-      <option value="lastName">Last Name</option>
-      <option value="email">Email</option>
-      <option value="phoneNumber">Phone Number</option>
-      <option value="address">Address</option>
-      <option value="dni">DNI</option>
-    </select>
+      Search
+    </button>
   </div>
-
-<button (click)="getUsers()" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Search</button>
-</div>
 
   <!-- Table -->
   <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -452,65 +457,62 @@
               <p class="text-gray-900 whitespace-no-wrap">{{ user.dni }}</p>
             </td>
 
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <span
-                class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-              >
+            <td
+              [tooltip]="getDynamicTooltipAccount(user.enabled, user.accountNonExpired, user.accountNonLocked, user.credentialsNonExpired)"
+              [options]="toolOptionAccountStatus"
+              class="px-2 py-5 border-b border-gray-200 bg-white text-sm">
+              <div class="flex justify-center">
                 <span
-                  aria-hidden
-                  class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                ></span>
-                <span class="relative">{{ user.enabled }}</span>
-              </span>
-            </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <span
-                class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-              >
-                <span
-                  aria-hidden
-                  class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                ></span>
-                <span class="relative">{{ user.accountNonExpired }}</span>
-              </span>
-            </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <span
-                class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-              >
-                <span
-                  aria-hidden
-                  class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                ></span>
-                <span class="relative">{{ user.accountNonLocked }}</span>
-              </span>
-            </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <span
-                class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-              >
-                <span
-                  aria-hidden
-                  class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                ></span>
-                <span class="relative">{{ user.credentialsNonExpired }}</span>
-              </span>
+                  [class]="getColorClassAccountStatus(user.enabled)"
+                  class="relative px-2.5 py-0.5 my-2 inline-block text-xs font-medium rounded-full border dark:border-transparent">
+                  <p>{{ getAccountStatus(user.enabled) }}</p>
+                </span>
+              </div>
+
+              <div>
+                 <div class="grid grid-cols-4 gap-2 place-content-between">
+                  <div class="mx-0">
+                    <span class="flex items-center justify-center size-5 text-xs font-medium"
+                    [class]="getColorAccountStatusBadges(user.enabled)">
+                      <lucide-icon name="shield-check" [size]="16" color="black" [strokeWidth]="2"></lucide-icon>
+                    </span>
+                  </div>
+                  <div class="mx-0">
+                    <span class="flex items-center justify-center size-5 text-xs font-medium"
+                    [class]="getColorAccountStatusBadges(user.accountNonExpired)">
+                      <lucide-icon name="shield-alert" [size]="16" color="black" [strokeWidth]="2"></lucide-icon>
+                    </span>
+                  </div>
+                  <div class="mx-0">
+                    <span class="flex items-center justify-center size-5 text-xs font-medium"
+                    [class]="getColorAccountStatusBadges(user.accountNonLocked)">
+                      <lucide-icon name="shield-ban" [size]="16" color="black" [strokeWidth]="2"></lucide-icon>
+                    </span>
+                  </div>
+                  <div class="mx-0">
+                    <span class="flex items-center justify-center size-5 text-xs font-medium"
+                    [class]="getColorAccountStatusBadges(user.credentialsNonExpired)">
+                      <lucide-icon name="shield-x" [size]="16" color="black" [strokeWidth]="2"></lucide-icon>
+                    </span>
+                  </div>
+                 </div>
+              </div>
             </td>
 
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <ul>
+              <ul
+                [tooltip]="getDynamicTooltipRole(user.roles)"
+                [options]="toolOptionRole"
+              >
                 @for (item of user.roles; track $index) {
-                <li class="p-1">
-                  <span
-                    class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-                  >
+                  <li class="p-1">
                     <span
-                      aria-hidden
-                      class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                    ></span>
-                    <span class="relative">{{ item.name }}</span>
-                  </span>
-                </li>
+                      class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border bg-white dark:bg-zink-700"
+                      [ngClass]="getRoleClass(item.name)">
+                      {{ item.name }}
+                    </span>
+                  </li>
+
                 }
               </ul>
             </td>
@@ -518,25 +520,6 @@
               <p class="text-gray-900 whitespace-no-wrap">
                 {{ user.accountExpiryDate }}
               </p>
-            </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <ul>
-                @for (item of user.roles; track $index) {
-                @for (permission of item.permissionList; track $index) {
-                <li class="p-1">
-                  <span
-                    class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-                  >
-                    <span
-                      aria-hidden
-                      class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-                    ></span>
-                    <span class="relative">{{ permission.name }}</span>
-                  </span>
-                </li>
-                }
-                }
-              </ul>
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               <p class="text-gray-900 whitespace-no-wrap">
@@ -553,44 +536,42 @@
         class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between"
       >
         <span class="text-xs xs:text-sm text-gray-900">
-          Showing {{ page + 1 }} to {{ totalPages }} pages of {{totalElements}} Entries
+          Showing {{ page + 1 }} to {{ totalPages }} pages of
+          {{ totalElements }} Entries
         </span>
 
         <div class="">
-
           <!-- Counter Page -->
           <div class="inline-flex mt-2 xs:mt-0">
             <button
-            [disabled]="page === 0"
-            (click)="previousPage()"
-            class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 rounded-l transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-50"
+              [disabled]="page === 0"
+              (click)="previousPage()"
+              class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 rounded-l transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-50"
             >
               Prev
             </button>
 
             <!-- Page Numbers -->
             @for (i of pagesArray; track $index) {
-              <button
-                [class.active]="i === page"
-                (click)="goToPage(i)"
-                class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
-              >
-                {{ i + 1 }}
-              </button>
+            <button
+              [class.active]="i === page"
+              (click)="goToPage(i)"
+              class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
+            >
+              {{ i + 1 }}
+            </button>
             }
 
             <button
-            [disabled]="page >= totalPages - 1"
-            (click)="nextPage()"
-            class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 rounded-r transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-50"
+              [disabled]="page >= totalPages - 1"
+              (click)="nextPage()"
+              class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 rounded-r transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-50"
             >
               Next
             </button>
           </div>
-
         </div>
       </div>
-
     </div>
   </div>
 </div>

@@ -57,6 +57,8 @@
     "lucide-angular": "^0.298.0",
     "moment": "^2.29.4",
     "ng-apexcharts": "^1.8.0",
+    "ng2-search-filter": "^0.5.1",
+    "ng2-tooltip-directive": "^2.10.3",
     "ngx-clipboard": "^16.0.0",
     "ngx-color-picker": "^16.0.0",
     "ngx-cookie-service": "^17.0.1",

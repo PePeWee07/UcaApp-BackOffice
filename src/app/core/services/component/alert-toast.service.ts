@@ -7,12 +7,12 @@ import Swal from 'sweetalert2';
 export class AlertToastService {
   constructor() {}
 
-  showToast(icon: 'success' | 'error' | 'warning' | 'info', title: string) {
+  showToast(icon: 'success' | 'error' | 'warning' | 'info', title: string, timer: number) {
     const Toast = Swal.mixin({
       toast: true,
       position: 'top-end',
       showConfirmButton: false,
-      timer: 1500,
+      timer: timer,
       timerProgressBar: true,
       didOpen: (toast) => {
         toast.onmouseenter = Swal.stopTimer;

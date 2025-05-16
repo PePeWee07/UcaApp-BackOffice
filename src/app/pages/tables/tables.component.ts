@@ -9,11 +9,12 @@ import { debounceTime, Subject } from 'rxjs';
 import { TooltipModule, TooltipOptions } from 'ng2-tooltip-directive';
 import { CommonModule } from '@angular/common';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
+import { MnDropdownComponent } from '../../component/dropdown';
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule ],
+  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule, MnDropdownComponent ],
   templateUrl: './tables.component.html',
   styleUrl: './tables.component.scss',
   providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
@@ -27,7 +28,7 @@ export class TablesComponent {
   ) {}
 
   userList: Usuario[] = [];
-  keysUser: string[] = [] || [''];
+  keysUser: string[] = [];
 
   //Parametros de paginacion
   page: number = 0;
@@ -87,8 +88,19 @@ export class TablesComponent {
           //Obteniendo las keys de los objetos
           if (this.userList.length > 0) {
             const usuarioKeysDynamic = Object.keys(this.userList[0])
-              .filter(key => key !== 'authorities' && key !== 'accountNonExpired' && key !== 'accountNonLocked' && key !== 'credentialsNonExpired')
-              .map(key => key === 'enabled' ? 'Account Status' : key) as (keyof Usuario)[];
+              .filter((key: string) =>
+                key !== 'authorities' &&
+                key !== 'accountNonExpired' &&
+                key !== 'accountNonLocked' &&
+                key !== 'credentialsNonExpired' &&
+                key !== 'username'
+              )
+              .map((key: string) =>
+                key === 'enabled' ? 'Account Status' : key &&
+                key === 'accountExpiryDate' ? 'Account Expiry Date' : key &&
+                key === 'phoneNumber' ? 'Phone Number' : key &&
+                key === 'lastName' ? 'Last Name' : key
+              ) as (keyof Usuario)[];
             this.keysUser = usuarioKeysDynamic ? usuarioKeysDynamic : ['None'];
           } else {
             this.keysUser = ['None'];

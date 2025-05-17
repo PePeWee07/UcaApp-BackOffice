@@ -12,14 +12,14 @@ import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lu
 // import { MnDropdownComponent } from '../../component/dropdown';
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-user-tables',
   standalone: true,
   imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule ],
-  templateUrl: './tables.component.html',
-  styleUrl: './tables.component.scss',
+  templateUrl: './user-tables.component.html',
+  styleUrl: './user-tables.component.scss',
   providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
 })
-export class TablesComponent {
+export class UserTablesComponent {
 
   constructor(
     private adminService: UserAdminService,

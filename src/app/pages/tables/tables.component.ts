@@ -9,12 +9,12 @@ import { debounceTime, Subject } from 'rxjs';
 import { TooltipModule, TooltipOptions } from 'ng2-tooltip-directive';
 import { CommonModule } from '@angular/common';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
-import { MnDropdownComponent } from '../../component/dropdown';
+// import { MnDropdownComponent } from '../../component/dropdown';
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule, MnDropdownComponent ],
+  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule ],
   templateUrl: './tables.component.html',
   styleUrl: './tables.component.scss',
   providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]

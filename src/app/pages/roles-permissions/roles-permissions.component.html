@@ -1,0 +1,388 @@
+<div class="py-1">
+  <!-- Title -->
+    <h2 class="font-semibold leading-tight pt-0 pb-5 pl-5
+     text-blue-600" i18n="@@pageTitle">Roles Permissions</h2>
+</div>
+
+<div class="grid grid-cols-2 grid-rows-1 gap-x-4 max-h-screen ">
+    <div class="" *ngIf="this.id && withPermissions(['READ'])">
+        <!-- User Informacion -->
+        <div class="card mb-4 h-fit" >
+            <div class="card-body p-0">
+                <div class="grid grid-cols-1 gap-5" *ngIf="this.user">
+                    <div class="w-fit lg:grid-cols-10">
+                        <strong class="mb-1 text-md">{{this.user.name}} {{this.user.lastName}}  </strong>
+                        <div class="grid grid-cols-2 text-sm my-5 mr-5 pr-5 w-fit">
+                            <div *ngFor="let item of User" class="grid grid-cols-2">
+                                <p>{{item.key | uppercase }}: </p>
+                                <p class="text-slate-500 dark:text-zink-200">{{item.value}}</p> 
+                            </div>
+                        </div>
+                        <strong class="my-5 text-md">User Roles:</strong>
+                        <ul class="mb-4 grid grid-cols-2 gap-x-4 w-fit">
+                            <li class=" border rounded-l rounded-r p-2 my-2 text-left text-slate-500 dark:text-zink-200" *ngFor="let role of this.user?.roles">
+                                <h6>{{role.name}}</h6>
+                                <ul *ngIf="role.permissionList" class="flex gap-x-2 flex-wrap">
+                                    <li *ngFor="let perm of role.permissionList!" [innerHTML]="getPermissionBadge(perm.name)">
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!--end grid-->
+            </div>
+            <!-- Tabs -->
+            <div class="card-body !py-0">
+                <app-nav [tabSetName]="'personal'" [defaultActiveKey]="'view'" className="flex flex-wrap w-full text-sm font-medium text-center nav-tabs">
+                    <app-nav-item [tabSetName]="'personal'" [eventKey]="'view'" class="group">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="personalTabs" class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">
+                            View</a>
+                    </app-nav-item>
+                    <app-nav-item [tabSetName]="'personal'" [eventKey]="'roles'" class="group">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="personalTabs" class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">
+                            Change Role</a>
+                    </app-nav-item>
+                    <app-nav-item [tabSetName]="'personal'" [eventKey]="'permissions'" class="group">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="integrationTabs" class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">
+                            Create New Role</a>
+                    </app-nav-item>
+                    <app-nav-item *ngIf="showUpdateRoleTab && withPermissions(['UPDATE'])"  [tabSetName]="'personal'" [eventKey]="'update'" class="group">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="integrationTabs" class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">
+                            Update Role</a>
+                    </app-nav-item>
+                </app-nav>
+            </div>
+        </div>
+        <!-- Actualizar informacion -->
+        <div class="tab-content" *ngIf="this.id && withPermissions(['READ'])">
+        <!-- View available roles and permissions -->
+        <mn-tab-pane *ngIf="withPermissions(['READ', 'UPDATE'])" [tabSetName]="'personal'" [eventKey]="'view'" class="block tab-pane" id="personalTabs">
+            <div class="card">
+                <div class="card-body">
+                    <div class="py-2">
+                        <p class="font-medium">All Roles</p>
+                        <ul>
+                            <li *ngFor="let role of this.roles" class="list-none pl-2 text-slate-600">
+                                {{role.name}}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="py-2">
+                        <p class="font-medium">All Permissions</p>
+                        <ul>
+                            <li *ngFor="let permission of this.permissions" class="list-none pl-2 text-slate-600">
+                                {{permission.name}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </mn-tab-pane>
+        <!-- Update USER Roles -->
+        <mn-tab-pane *ngIf="withPermissions(['READ', 'UPDATE'])" [tabSetName]="'personal'" [eventKey]="'roles'" class="block tab-pane" id="personalTabs">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-1 text-lg">Select Roles</h6>
+                    <div>
+                        <form  (ngSubmit)="updateUserRole(user?.id!)" class="overflow-y-auto">
+                            <div class="my-4 ml-5">
+                                @for(role of this.roles; track role.id){
+                                    <div class=" p-2 my-2 flex gap-x-4 text-left text-slate-500 dark:text-zink-200" >
+                                        
+                                        <input type="checkbox" [name]="role.id" [value]="role.id" (change)="onRoleCheckboxChange($event, role.name, role.id, this.selectedRoles)">
+                                        <h6 class="flex">{{role.name}}</h6>
+                                        <h6 class="flex">|</h6>
+                                        <ul *ngIf="role.permissionList" class="flex gap-x-2">
+                                            <li *ngFor="let perm of role.permissionList!" class="text-sm">
+                                                {{perm.name}}
+                                            </li>
+                                        </ul>   
+                                        <!-- MODAL -->
+                                        <div mndropdown [placement]="'top'" class="dropdown" *ngIf="role.name != 'ADMIN' && role.name != 'USER'">
+                                            <button type="button" mndropdownToggle class="flex border border-slate-200 items-center justify-center size-[20px] dropdown-toggle p-0 text-slate-500 btn bg-white hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20" data-bs-toggle="dropdown"><lucide-angular name="more-horizontal" class="size-3"></lucide-angular></button>
+                                            <ul mndropdownMenu class="absolute z-50 py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600">
+                                                <li *ngIf="withPermissions(['DELETE'])">
+                                                    <a class="text-red-500 text-sm block px-4 py-1.5 transition-all duration-200 ease-linear dropdown-item hover:bg-slate-100 hover:text-red-500 focus:bg-slate-100 focus:text-red-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" (click)="deleteRol(role.id)" ><lucide-angular name="trash-2" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular> <span class="align-middle">Delete</span></a>
+                                                </li>
+                                                <li *ngIf="withPermissions(['UPDATE'])">
+                                                    <app-nav-item [tabSetName]="'personal'" [eventKey]="'update'" class="group">
+                                                        <a (click)="this.showUpdateRoleTab = true; this.selectedRole = role" data-tab-toggle data-target="integrationTabs" class="text-sm block px-4 py-1.5  transition-all duration-200 ease-linear text-green-600 dropdown-item hover:bg-slate-100 hover:text-green-500 focus:bg-green-100 focus:text-green-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200">
+                                                            <lucide-angular name="file-edit" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular>
+                                                            Update</a>
+                                                    </app-nav-item>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="justify-end mt-6 gap-x-4">
+                                <button type="submit"
+                                    class="relative border p-2 rounded-l rounded-r flex text-sm items-center justify-center overflow-hidden shadow-sm transition-all text-green-500 bg-white border-green-500 before:absolute before:h-0 before:w-0 before:rounded-full before:bg-green-600 before:duration-500 before:ease-out hover:shadow-lg hover:before:h-56 hover:before:w-56 hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/20">
+                                    <p class="z-10">Update</p>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </mn-tab-pane>
+        <!-- Create New Role -->
+        <mn-tab-pane *ngIf="withPermissions(['CREATE'])" [tabSetName]="'personal'" [eventKey]="'permissions'" class="tab-pane" id="edit">
+            <div class="card">
+                <div class="card-body">
+                    <form (ngSubmit)="addRole(newRole)" class="">
+                        <div class="flex gap-x-5">
+                            <div>
+                                <h6 class="text-15">Create Rol:</h6>
+                                <p class="mb-4 text-slate-500 dark:text-zink-200 text-sm">Create a new role with permissions.</p>
+                                <div class="grid grid-cols-2 gap-2 xl:grid-cols-12">
+                                    <div class="xl:col-span-6 col-span-2 w-full">
+                                        <label for="rolName" class="inline-block mb-2 text-base">New Role Name *</label>
+                                        <input type="text" id="newRole" [(ngModel)]="newRole" name="newRole" class="w-max form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter role name" [value]="">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 mt-5">
+                                    <h6 class="text-15">Add permissions to the role:</h6>
+                                    <div class="xl:col-span-6 ">
+                                        <label for="rolName" class="inline-block mb-2 text-base text-slate-500 dark:text-zink-200 text-sm font-medium">Create Permission</label>
+                                        <div class="flex">
+                                            <input (keydown.enter)="onEnterPress($event)" type="text" id="permissionInput" [(ngModel)]="permissionInput" name="permissionInput" class="border border-r-transparent rounded-r-none form-input focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter permission name" [value]="">
+                                            <button type="button" class="px-1 border rounded-r text-sm bg-blue-500 text-white border border-blue-500" (click)="addPermission(permissionInput)">Create</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" p-2 my-2 text-left text-slate-500 dark:text-zink-200" >
+                                    <li *ngFor="let perm of this.permissions" class="flex text-sm gap-x-4 ">
+                                        <input type="checkbox" [name]="perm.name" [value]="perm.id" (change)="onPermissionCheckboxChange($event, perm.name, perm.id, this.selectedPermissions)">
+                                        <p>{{perm.name}}</p>
+                                    </li>
+                                </div>
+                            </div>
+                            <div class="border-l p-5">
+                                <div>
+                                    <strong>Role: </strong>
+                                    <p>{{newRole}}</p>
+                                </div>
+                                <div>
+                                    <strong>Permissions: </strong>
+                                    <li class="list-none" *ngFor="let perm of newPermissions" [innerHTML]="getPermissionBadge(perm)"></li>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-6 gap-x-4">
+                            <button type="submit"
+                                class="text-white btn bg-green-500 border-custom-500 hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                                Update
+                            </button>
+                        </div>
+                    </form><!--end form-->
+                </div>
+            </div>
+        </mn-tab-pane>
+        <!-- Update Role -->
+        <mn-tab-pane [tabSetName]="'personal'" [eventKey]="'update'" class="tab-pane" id="update" *ngIf="this.selectedRole != null">
+            <div class="card">
+                <div class="card-body">
+                    <form (ngSubmit)="updateRole(this.selectedRole!.id)" class="">
+                        <div class="flex gap-x-5">
+                            <div>
+                                <h6 class="text-15">Update Rol: {{this.selectedRole!.name}}</h6>
+                                <p class="mb-4 text-slate-500 dark:text-zink-200 text-sm">Update the selected role.</p>
+                                
+                                <div class="grid grid-cols-1 mt-5">
+                                    <h6 class="text-15">Change Permissions:</h6>
+                                    <div class="xl:col-span-6 ">
+                                        <label for="rolName" class="inline-block mb-2 text-base text-slate-500 dark:text-zink-200 text-sm font-medium">Create Permission</label>
+                                        <div class="flex">
+                                            <input type="text" id="permissionInput" [(ngModel)]="permissionInput" name="permissionInput" class="border border-r-transparent rounded-r-none form-input focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter permission name" [value]="">
+                                            <button class="px-1 border rounded-r text-sm bg-blue-500 text-white border border-blue-500" (click)="addPermission(permissionInput)">Create</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" p-2 my-2 text-left text-slate-500 dark:text-zink-200" >
+                                    <li *ngFor="let perm of this.permissions" class="flex text-sm gap-x-4 ">
+                                        <input type="checkbox" [name]="perm.name" [value]="perm.id" (change)="onPermissionCheckboxChange($event, perm.name, perm.id, this.selectedPermissions)">
+                                        <p>{{perm.name}}</p>
+                                    </li>
+                                </div>
+                            </div>
+                            <div class="border-l p-5">
+                                <div>
+                                    <strong>Role: </strong>
+                                    <p>{{this.selectedRole.name}}</p>
+                                </div>
+                                <div>
+                                    <strong>Permissions: </strong>
+                                    <li class="list-none" *ngFor="let perm of newPermissions" [innerHTML]="getPermissionBadge(perm)"></li>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-6 gap-x-4">
+                            <button type="submit"
+                                class="text-white btn bg-green-500 border-custom-500 hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                                Update
+                            </button>
+                        </div>
+                    </form><!--end form-->
+                </div>
+            </div>
+        </mn-tab-pane>
+        </div>
+    </div>
+
+    <!-- Create Rol without user -->
+    <div *ngIf="withPermissions(['CREATE']) && !this.id" class="tab-pane h-full" id="edit">
+        <div class="card h-full m-0">
+            <div class="card-body">
+                <form (ngSubmit)="addRole(newRole)" class="">
+                    <div class="flex gap-x-5">
+                        <div>
+                            <h6 class="text-15">Create Rol:</h6>
+                            <p class="mb-4 text-slate-500 dark:text-zink-200 text-sm">Create a new role with permissions.</p>
+                            <div class="grid grid-cols-2 gap-2 xl:grid-cols-12">
+                                <div class="xl:col-span-6 col-span-2 w-full">
+                                    <label for="rolName" class="inline-block mb-2 text-base">New Role Name *</label>
+                                    <input type="text" id="newRole" [(ngModel)]="newRole" name="newRole" class="w-max form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter role name" [value]="">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 mt-5">
+                                <h6 class="text-15">Add permissions to the role:</h6>
+                                <div class="xl:col-span-6 ">
+                                    <label for="rolName" class="inline-block mb-2 text-base text-slate-500 dark:text-zink-200 text-sm font-medium">Create Permission</label>
+                                    <div class="flex">
+                                        <input (keydown.enter)="onEnterPress($event)" type="text" id="permissionInput" [(ngModel)]="permissionInput" name="permissionInput" class="border border-r-transparent rounded-r-none form-input focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter permission name" [value]="">
+                                        <button type="button" class="px-1 border rounded-r text-sm bg-blue-500 text-white border border-blue-500" (click)="addPermission(permissionInput)">Create</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" p-2  my-2 text-left text-slate-500 dark:text-zink-200" >
+                                <li *ngFor="let perm of this.permissions" class="flex text-sm gap-x-4 ">
+                                    <input type="checkbox" [name]="perm.name" [value]="perm.id" (change)="onPermissionCheckboxChange($event, perm.name, perm.id, this.selectedPermissions)">
+                                    <p>{{perm.name}}</p>
+                                </li>
+                            </div>
+                        </div>
+                        <div class="border-l p-5">
+                            <div>
+                                <strong>Role: </strong>
+                                <p>{{newRole}}</p>
+                            </div>
+                            <div>
+                                <strong>Permissions: </strong>
+                                <li class="list-none" *ngFor="let perm of newPermissions" [innerHTML]="getPermissionBadge(perm)"></li>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-x-4">
+                        <button type="submit"
+                            class="text-white btn bg-green-500 border-green-500 hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                            Update
+                        </button>
+                    </div>
+                </form><!--end form-->
+            </div>
+            <div *ngIf="withPermissions(['READ', 'UPDATE'])" class="block pl-5 border-t " id="personalTabs">
+
+                <div class="py-2">
+                    <p class="font-medium">All Roles</p>
+                    <ul class="flex">
+                        <li *ngFor="let role of this.roles" class="list-none pl-2 text-slate-600">
+                            {{role.name}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="py-2">
+                    <p class="font-medium">All Permissions</p>
+                    <ul class="flex">
+                        <li *ngFor="let permission of this.permissions" class="list-none pl-2 text-slate-600">
+                            {{permission.name}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roles/Permissions List -->
+    
+    <div class=" flex flex-col" *ngIf="withPermissions(['READ'])">
+        <div class="card p-3">
+            <div class="flex h-[30vh] border rounded-lg overflow-y-auto">
+                <!-- left Sidebar -->
+                <div class="w-fit bg-slate-100 dark:bg-zinc-800 overflow-y-auto border-r">
+                    <h2 class="text-15 font-semibold p-4 border-b dark:text-white">Menu</h2>
+                    <ul class="divide-y">
+                        <!-- *ngFor="let menu of menuItems" -->
+                        <li *ngFor="let menu of menuItems" 
+                            (click)="selected(menu.label)"
+                            class="cursor-pointer px-4 py-2 hover:bg-slate-200 dark:hover:bg-zinc-700 text-sm"
+                            
+                            >
+                            {{ menu.label }}
+                            
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Bottom Table Area -->
+                <main class="flex-1 overflow-x-auto p-6">
+                    <p class="font-bold mb-4 text-center text-sm">{{ selectedPage.menu }} Permissions</p>
+                    <div  *ngIf="selectedPage">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                        <tr class="text-sm">
+                            <th></th>
+                            <th *ngFor="let perm of this.permissions" class="border-b text-custom-500 py-2 text-center w-24">
+                                <p>{{perm.name}}</p>
+                            </th>
+
+                        </tr>
+                        </thead>
+                        <tbody  >
+                            <tr *ngFor="let func of selectedPage.functions" class="text-sm w-fit max-w-fit hover:bg-slate-50 dark:hover:bg-zinc-700">
+                                <td class="py-2 pr-4 w-fit">{{ func.name }}</td>
+                                <td class="text-center w-fit" *ngFor="let perm of this.permissions">
+                                    <span *ngIf="func.permissions.includes(perm.name)">✓</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    <div *ngIf="!selectedPage"  class="text-center text-gray-500 mt-10">
+                        Select a menu to view permissions.
+                    </div>
+                </main>
+            </div>
+        </div>
+        
+        <div class="card p-3 m-0">
+            <h5 class="text-center mb-2 font-medium text-base">Pages - Role Access</h5>
+            <div  class="w-full h-fit max-h-[16vw] overflow-y-auto border rounded-l rounded-r">
+                <table class="w-full text-sm text-center overflow-x-auto">
+                    <thead class="sticky top-0 bg-slate-100">
+                        <tr>
+                            <th *ngFor="let menu of menuItems" class="px-2 py-1 text-blue-600 whitespace-nowrap">
+                                {{ menu.label }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td *ngFor="let menu of menuItems" class="align-top px-2 py-1">
+                                <ul class="space-y-1">
+                                    @for(role of menu.roles; track $index) {
+                                        <li class="text-slate-500">{{ role }}</li>
+                                    }
+                                </ul>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+

@@ -1,0 +1,10 @@
+input:focus {
+    border-bottom: 1px solid #478aff;
+    outline:none;
+}
+input{
+    transition: border-bottom-color 0.3s; 
+}
+input.ng-invalid.ng-touched {
+  border-bottom-color: #f56565;
+}

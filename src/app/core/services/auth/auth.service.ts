@@ -120,6 +120,18 @@ export class AuthService {
     return false;
   }
 
+  // verificar si el usuario tiene un rol especificado
+  includesRole(roles: string[]): boolean {
+    let userRoles: string = this.dataPayload.authorities! ;
+    return roles.some(role => userRoles.includes(role));
+  }
+
+  includesPermission(permissions: string[]): boolean{
+    let userPermissioins: string = this.dataPayload.authorities! ;
+    return permissions.some(permissions => userPermissioins.includes(permissions));
+  }
+
+
   // Obtiene el usuario activo del payload token
   public get dataPayload(): JwtPayload {
     if (this._jwtData != null) {

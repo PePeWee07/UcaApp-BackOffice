@@ -1,0 +1,359 @@
+<div class="py-1">
+  <!-- Title -->
+  <div>
+    <h2 class="text-2xl font-semibold leading-tight mb-5 text-blue-600">Chat Users</h2>
+  </div>
+
+    <!-- Filters -->
+     <div class="!py-3.5 card-body  p-2 rounded-l rounded-r dark:border-zink-500 bg-white"  style="box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);">
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <div class="relative xl:col-span-1"> 
+            <!-- start column -->
+              <div class="flex flex-row gap-x-0 justify-left">
+                  <!-- Page Size -->
+                  <div class="relative">
+                    <select
+                      (change)="onPageSizeChange($any($event.target).value)"
+                      class="h-full rounded-l border block appearance-none w-full bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        class="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <!-- SortBy -->
+                  <div class="relative">
+                    <select
+                      (change)="onSortByChange($any($event.target).value)"
+                      class="h-full border-t block appearance-none w-full sm:rounded-r-none sm:border-r-1 border-r border-b bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-blue-500"
+                    >
+                      @for (item of userKeys; track $index) {
+                        <option value="{{item}}">{{item}}</option>
+                      }
+                    </select>
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                    >
+                      <svg
+                        class="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <!-- Direction -->
+                  <div class="relative">
+                    <select
+                      (change)="onDirectionChange($any($event.target).value)"
+                      class="h-full rounded-r border block appearance-none w-full bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    >
+                      <option value="asc">Asc</option>
+                      <option value="desc">Des</option>
+                    </select>
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                    >
+                      <svg
+                        class="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+          </div><!--end col-->
+
+          <div class="relative col-span-2 xl:col-start-3">
+            <div class="flex flex-row gap-x-0 justify-left">
+              <!-- Search -->
+              <div class="block relative justify-end"><!-- start column -->
+                <span class="h-full absolute inset-y-0 left-0 flex items-center pl-3">
+                  <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
+                    <path
+                      d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"
+                    ></path>
+                  </svg>
+                </span>
+                <input
+                  class="ltr:pl-20 pl-8 ltr:pr-8 search rounded-r-none border border-r-transparent form-input  outline-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-slate-100 disabled:border-slate-300 disabled:text-slate-500 dark:focus:border-custom-800 placeholder:text-slate-400"
+                  type="text"
+                  [(ngModel)]="searchText"
+                  placeholder="Search users..."
+                  (keyup)="onSearch($event)"
+                  (keyup.enter)="searchUser(selectedField)"
+                />
+              </div>
+
+            
+            <!-- Search Field Selector -->
+            <div class="mt-0 text-sm">
+              <select
+                class=" px-2 py-2.5 rounded-r border border-l-transparent border-slate-200 text-gray-400"
+                [(ngModel)]="selectedField"
+              >
+                <option value="whatsappPhone">Telefono</option>
+                <option value="identificacion">Identificacion</option>
+              </select>
+            </div>
+
+            <button data-ripple-dark="true"
+              class="before:ease ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-00 transition-all  hover:shadow-lg before:absolute before:right-0 before:top-0 before:h-12 before:w-6 before:translate-x-12 before:rotate-6 before:bg-white before:opacity-10 before:duration-700 hover:before:-translate-x-40"
+              (click)="searchUser(selectedField)"
+            >
+              Search
+            </button>
+          </div>
+
+          </div><!--end col-->
+        </div>
+  </div>
+
+   <!-- Table -->
+  <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto" *ngIf="withPermissions(['READ'])">
+    <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
+      <table mat-table class="min-w-full leading-normal ">
+        <thead>
+          <tr>
+            @for (key of tableKeys; track $index) {
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-slate-100 text-left text-xs font-semibold text-gray-700 uppercase ">
+              {{ key || '-' }}
+            </th>
+            }
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-slate-100 text-left text-xs font-semibold text-gray-700 uppercase ">Open Chat</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of userList; track user.id ) {
+            <tr class="before: border-b bg-white hover:bg-gray-100" (click)="toggleUser(user.id!)">
+              <td class="px-5 py-5 text-sm">
+                <p class="text-blue-600 whitespace-no-wrap">{{ user.id ?? '-' }}</p>
+              </td>
+              <td class="px-5 py-5 text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">{{ user.erpUser?.nombres ?? '-' }}</p>
+              </td>
+              <td class="px-5 py-5 text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">{{ user.erpUser?.apellidos ?? '-'}}</p>
+              </td>
+              <td class="px-5 py-5 text-sm">
+                <p class="text-gray-900 whitespace-no-wrap"> {{ user.identificacion ?? '-'}}</p>
+              </td>
+              <td class="px-5 py-5 text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">{{ user.whatsappPhone ?? '-'}}</p>
+              </td>
+              <td class="content-baseline flex px-5 py-5 text-sm text-center">
+                <div class="py-2">
+                  <div [innerHTML]="getConversationState(user.conversationState!)">
+                  </div>
+                </div>
+              </td>
+              <td class=" px-5 py-5 justify-content-center">
+                <label class="inline-flex items-center cursor-pointer group relative" >
+                  <input [disabled]="!withPermissions(['UPDATE'])"
+                         type="checkbox"
+                         class="sr-only peer"
+                         [checked]="user.block"
+                         (change)="changeUserStatus(user)"
+                         />
+                  <div class="relative w-11 h-6 bg-green-300 rounded-full peer peer-focus:ring-2 peer-focus:ring-green-300 dark:peer-focus:ring-gray-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white  after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-400 dark:peer-checked:bg-red-400"></div>
+                    <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-gray-700/60 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md">
+                      {{user.block ? 'Unblock': 'Block'}}
+                    </div>
+                </label>
+              </td>
+              <td class="px-5 py-5 text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">{{user.blockingReason ?? '-'}}</p>
+              </td>
+              <td class="px-5 py-5 text-sm">
+                <p class="text-gray-900 whitespace-no-wrap">{{ user.erpUser?.emailInstitucional ?? '-'}}</p>
+              </td>
+              <td class="content-baseline text-center " style="justify-content: center;">
+                <button *ngIf="user.threadId" 
+                        [disabled]="!withPermissions(['READ'])"
+                        [routerLink]="['/chatHistory', {'identificacion': user.identificacion}]" 
+                        class="mt-5 hover:bg-blue-500 rounded-l rounded-r hover:text-white hover:shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                    
+                </button>
+                
+              </td>
+            </tr>
+            <!-- Collapsable Subtable -->
+            <tr *ngIf="this.selectedUser == user.id!" class="text-xs border border-gray-200 focus:border-blue-300" style="box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.15) inset;">
+              <td class="px-5 py-5 overflow-x-auto justify-items-center " colspan="100%">
+                  <div class=" size-max max-w-full flex gap-4 mb-4 ">
+                    <!-- Roles -->
+                      <div class=" bg-white border border-gray-20 col-span-1 rounded-l rounded-r shadow-sm w-[20rem]">
+                          <p class="font-medium text-center p-4">{{erpUserKeys.at(erpUserKeys.length-1) | uppercase }}</p>
+                          <ul>
+                            @if(user.erpUser?.rolesUsuario){
+                              @for(roles of user.erpUser?.rolesUsuario ; track $index){
+                              <li 
+                                  [ngClass]="{'border-blue-500' : selectedRol == $index}"
+                                  class="flex group/item bg-white rounded-l rounded-r border w-full py-3 px-12 grid grid-cols-2 gap-8 mb-1"
+                                  (click)="openRole($index)"
+                                >
+                                  <div>{{roles.tipoRol}}</div>
+                                <span class="text-right flex" style="justify-content: end;">
+                                    <lucide-angular *ngIf="selectedRol == $index" name="chevron-down" [class]="'size-4 group-[.show]/item:inline-block'"></lucide-angular>
+                                    <lucide-angular *ngIf="selectedRol != $index" name="chevron-up" [class]="'size-4 group-[.show]/item:hidden'"></lucide-angular>
+                                </span>
+                              </li> 
+                              <div *ngIf="selectedRol == $index" class="w-[20rem] max-h-[5rem] overflow-hidden overflow-y-auto">
+                                <ul class=" justify-content-center px-2 wrap-anywhere mb-1" style="max-height: calc(3 * 6rem);">
+                                  @for(detalles of roles.detallesRol; track $index ){
+                                    @if(roles.tipoRol === 'ESTUDIANTE'){
+                                    <div class="border-l border-gray-400 ml-1 pl-2 mt-1 text-gray-600 overflow-auto">
+                                      <li ><strong>{{rolKeys[4] | titlecase }}: </strong>{{detalles.sede ?? ''}}</li>
+                                      <li class=""><strong>{{rolKeys[1] | titlecase}}: </strong>{{detalles.nombreCarrera ?? ''}}</li>
+                                      <li class="text-wrap wrap-anywhere"><strong>{{rolKeys[3] | titlecase}}: </strong>{{detalles.unidadAcademica ?? ''}}</li>
+                                      <li class=""><strong>{{rolKeys[6] | titlecase}}: </strong>{{detalles.curso ?? ''}} {{detalles.paralelo ?? '' }}</li>
+                                    </div>
+                                    }@else {
+                                      <div class="border-l border-gray-400 ml-1 pl-2 mt-1 text-gray-600 overflow-auto">
+                                        <li ><strong>{{rolKeys[4] | titlecase }}: </strong>{{detalles.sede ?? ''}}</li>
+                                        <li class=""><strong>{{rolKeys[8] | titlecase}}: </strong>{{detalles.nombreRol ?? ''}}</li>
+                                        <li class="text-wrap wrap-anywhere"><strong>{{rolKeys[9] | titlecase}}: </strong>{{detalles.unidadOrganizativa ?? ''}}</li>
+                                    </div>
+                                    }
+                                  }      
+                                </ul>
+                              </div>
+                              }
+                            }@else {
+                              <li>No Roles</li>
+                            }
+
+                          </ul>
+                      </div>
+                    <!-- User Information -->
+                      <div class="  bg-white border grid grid-cols-4 grid-rows-3 gap-x-0 gap-y-4 text-left  p-3 leading-[2] rounded-l rounded-r shadow-sm">
+                        <div class=" border-b font-medium pl-2" >{{userKeys[3] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2" >{{user.limitQuestions}}</div>      
+                        <div class=" border-b font-medium pl-2">{{userKeys[4] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2" >{{user.firstInteraction | date:'d/M/yy, h:mma'}}</div>
+                        <div class=" border-b font-medium pl-2" >{{userKeys[5] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2" >{{user.lastInteraction | date:'d/M/yy, h:mma'}}</div>
+                        <div class=" border-b font-medium pl-2" >{{userKeys[6] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2" >{{user.nextResetDate ?? '-'}}</div>
+                        <div class=" border-b font-medium pl-2" >{{userKeys[8] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2" >{{user.limitStrike}}</div>
+                        <div class=" border-b font-medium pl-2" >{{userKeys[9] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2">{{user.block}}</div> 
+                        <div class=" border-b font-medium pl-2" >{{userKeys[10] | uppercase }}:</div>
+                        <div class=" border-b text-right pr-2">{{user.blockingReason ?? '-'}}</div>
+                        <div class=" border-b font-medium pl-2" >{{userKeys[11] | uppercase}}:</div>
+                        <div class=" border-b text-right pr-2" >{{user.validQuestionCount}}</div>
+                        <div class=" border-b font-medium pl-2" >{{userKeys[2]  | uppercase}}:</div>
+                        <div class=" border-b text-right col-span-3">{{user.threadId ?? '-'}}</div>
+                      </div>
+                  </div>
+                  <!-- Chat Sessions -->
+                  <div>
+                    <div class="bg-white p-3 border border-gray-200 rounded-l rounded-r shadow-sm px-20"
+                          (click)="toggleSessions(user.id)">
+                      <div class="grid grid-cols-2 gap-10">
+                        <div class="font-medium">CHAT SESSIONS: </div>
+                        <div class="text-right">{{user.chatSessions?.length}}</div>
+                      </div>
+                    </div>
+                    <!-- Scrollable List Chat Sessions -->
+                    <div *ngIf="this.openSessions == user.id" class="overflow-hidden overflow-y-auto h-[12rem] card bg-white p-2 border border-gray-200">
+                      <ul class="flex flex-col gap-1 " style="max-height: calc(3 * 6rem);">
+                        @for(session of user.chatSessions; track session.id){
+                        <li
+                            [ngClass]="{'border-blue-500' : selectedSession == session.id!}"
+                            class="bg-white size-max rounded-l rounded-r border overflow-auto w-full p-2 shadow-sm flex"
+                            (click)="getSession(session.id!, session.startTime!, session.endTime!)"
+                          >
+                          <div class="grid grid-cols-3 grid-rows-2 gap-x-3 gap-y-0 text-left" colspa="20%"> 
+                            <div class="font-medium">{{chatSessionKeys[0] | uppercase }}</div>
+                            <div class="font-medium">{{chatSessionKeys[3] | uppercase}} </div>
+                            <div class="font-medium">{{chatSessionKeys[4] | uppercase}} </div>
+
+                            <div class="">{{session.id}}</div>
+                            <div >{{session.startTime | date: 'dd/MM/yy, h:mma'}}</div>
+                            <div >{{session.endTime | date: 'dd/MM/yy, h:mma'}}</div>
+                          </div>
+                        
+                          <lucide-icon *ngIf="selectedSession == session.id && withPermissions(['READ'])"
+                          [ngClass]="{'text-blue-500' : selectedSession == session.id!}"
+                          [routerLink]="['/chatHistory', {'identificacion': user.identificacion,  'phoneNumber': user.whatsappPhone || null,  'startDate': this.sessionStart, 'endDate': this.sessionEnd}]"
+                          name="chevron-right" [strokeWidth]="1.5" class="content-center"></lucide-icon>
+                          <div class="content-center"></div>
+
+                        </li>
+                        }
+                      </ul>
+                    </div>
+                  </div>
+              </td>
+            </tr>
+            
+          }
+          <tr *ngIf="userList.length == 0">
+            <td class="flex px-5 py-5 border-b border-gray-200 bg-white text-sm justify-end">No Users Found</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Pagination -->
+      <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+        <span class="text-xs xs:text-sm text-gray-900">
+          Showing {{ page + 1 }} to {{ totalPages }} pages of
+          {{ totalElements }} Entries
+        </span>
+
+        <div class="">
+          <!-- Counter Page -->
+          <div class="inline-flex mt-2 xs:mt-0">
+            <button
+              [disabled]="page === 0"
+              (click)="previousPage()"
+              class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 rounded-l transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            <!-- Page Numbers -->
+            @for (i of pagesArray; track $index) {
+            <button
+              [class.active]="i === page"
+              (click)="goToPage(i)"
+              class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
+            >
+              {{ i + 1 }}
+            </button>
+            }
+
+            <button
+              [disabled]="page >= totalPages - 1"
+              (click)="nextPage()"
+              class="bg-gray-300 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 px-4 py-2 rounded-r transition duration-300 ease-in-out hover:bg-blue-500 text-white hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

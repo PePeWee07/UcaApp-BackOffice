@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { SidebarService } from '../../core/services/component/sidebar.service';
 import { AuthService } from '../../core/services/auth/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

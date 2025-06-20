@@ -12,13 +12,18 @@ export const authRoleGuard: CanActivateFn = (route, state) => {
     router.navigate(['/login']);
     return false;
   }
+  // verificar si el usuario tiene un rol especificado
+  function includesRole(roles: string[], userRoles: string): boolean {
+    return roles.some(role => userRoles.includes(role));
+  }
 
-  // Comprobar si tiene permisos de administrador
-  if (authService.hasRole('ROLE_ADMIN')) {
+  // Comprobar si tiene roles necessarios
+  let userRoles = authService.dataPayload.authorities
+  if (includesRole(route.data['roles'], userRoles)) {
     return true;
   } else {
-    console.log('No Access', 'Not Available to Users', 'error');
+    console.log('No Access', 'Not Available to ', userRoles, 'error');
     router.navigate(['/notAccess']);
     return false;
   }
-};
+}

@@ -1,0 +1,166 @@
+<div class="py-1">
+  <!-- Title -->
+  <div>
+    <h2 class="text-2xl font-semibold leading-tight pt-0 pb-5 pl-10 text-blue-600">Profile</h2>
+  </div>
+
+<!-- User Information -->
+<div class="card">
+    <div class="card-body">
+        <div class="grid grid-cols-1 gap-5 lg:grid-cols-12 2xl:grid-cols-12">
+
+            <div class="lg:col-span-10 2xl:col-span-9">
+                <h5 class="mb-1">{{this.profileInfo?.name}} {{this.profileInfo?.lastName}} <span>{{this.profileKeys[0] | uppercase }} {{this.profileInfo?.id}}</span> </h5>
+
+                <div class="flex gap-3 mb-4">
+                    <p class="text-slate-500 dark:text-zink-200" *ngFor="let role of this.profileInfo?.roles">
+                        {{role.name}} |
+                    </p>
+                    <p class="text-slate-500 dark:text-zink-200"><lucide-angular name="map-pin" [class]="'inline-block size-4 ltr:mr-1 rtl:ml-1 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-500'"></lucide-angular>
+                        {{this.profileInfo?.address}}</p>
+                </div>
+                <ul class="flex flex-wrap gap-3 mt-4 text-left divide-x divide-slate-200 dark:divide-zink-500 rtl:divide-x-reverse">
+                    <li class="px-5">
+                        <h5>{{profileKeys[14]}}</h5>
+                        <p class="text-slate-500 dark:text-zink-200">{{this.profileInfo?.username}}</p>
+                    </li>
+                    <li class="px-5">
+                        <h5>{{profileKeys[4]}}</h5>
+                        <p class="text-slate-500 dark:text-zink-200">{{this.profileInfo?.phoneNumber}}</p>
+                    </li>
+                    <li class="px-5">
+                        <h5>{{profileKeys[6]}}</h5>
+                        <p class="text-slate-500 dark:text-zink-200">{{this.profileInfo?.dni}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div><!--end grid-->
+    </div>
+    <div class="card-body !py-0">
+        <app-nav [tabSetName]="'personal'" [defaultActiveKey]="'personal'" className="flex flex-wrap w-full text-sm font-medium text-center nav-tabs">
+            <app-nav-item [tabSetName]="'personal'" [eventKey]="'personal'" class="group">
+                <a href="javascript:void(0);" data-tab-toggle data-target="personalTabs" class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">
+                    Personal
+                    Info</a>
+            </app-nav-item>
+            <app-nav-item [tabSetName]="'personal'" [eventKey]="'edit'" class="group" *ngIf="withPermissions(['UPDATE', 'READ'])">
+                <a href="javascript:void(0);" data-tab-toggle data-target="integrationTabs" class="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]">
+                    Edit Profile</a>
+            </app-nav-item>
+        </app-nav>
+    </div>
+</div><!--end card-->
+
+<div class="tab-content">
+    <!-- Info -->
+    <mn-tab-pane [tabSetName]="'personal'" [eventKey]="'personal'" class="block tab-pane" id="personalTabs">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-1 text-lg">Personal Information</h6>
+                <div>
+                    <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
+                        <div class="xl:col-span-6">
+                            <label for="inputValue" class="inline-block mb-2 text-base font-medium">{{profileKeys[1] | titlecase }}</label>
+                            <p class="text-md text-gray-600">{{this.profileInfo?.name}}</p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="inputValue" class="inline-block mb-2 text-base font-medium">{{profileKeys[2] | titlecase }}</label>
+                            <p class="text-md text-gray-600">{{this.profileInfo?.lastName}}</p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="inputValue" class="inline-block mb-2 text-base font-medium">{{profileKeys[3] | titlecase }}</label>
+                            <p class="text-md text-gray-600">{{this.profileInfo?.email}}</p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="inputValue" class="inline-block mb-2 text-base font-medium">{{profileKeys[4] | titlecase }}</label>
+                            <p class="text-md text-gray-600">{{this.profileInfo?.phoneNumber}}</p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="joiningDateInput" class="inline-block mb-2 text-base font-medium">{{profileKeys[5] | titlecase }}</label>
+                            <p class="text-md text-gray-600">{{this.profileInfo?.address}}</p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="joiningDateInput" class="inline-block mb-2 text-base font-medium">{{profileKeys[6] | titlecase }}</label>
+                            <p class="text-md text-gray-600"> {{this.profileInfo?.dni}}</p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="inputValue" class="inline-block mb-2 text-base font-medium">{{profileKeys[11] | titlecase }}</label>
+                            <p class="text-md text-gray-500 dark:text-zink-200" *ngFor="let role of this.profileInfo?.roles">
+                                {{role.name}}
+                            </p>
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="inputValue" class="inline-block mb-2 text-base font-medium">Permissions</label>
+                                <p [innerHTML]="getPermissionBadge(permissions.name!)" *ngFor="let permissions of this.permissions">
+                                </p>
+                        </div><!--end col-->
+                    </div><!--end grid-->
+                </div>
+            </div>
+        </div>
+    </mn-tab-pane>
+    <!-- Edit Profile -->
+    <mn-tab-pane [tabSetName]="'personal'" [eventKey]="'edit'" class="tab-pane" id="edit">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-4 text-15">Update Profile</h6>
+                <p class="mb-4 text-slate-500 dark:text-zink-200">Update your personal details here easily.</p>
+                <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+                    <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
+                        <div class="xl:col-span-6">
+                            <label for="name" class="inline-block mb-2 text-base font-medium">First Name *</label>
+                            <input formControlName="name" type="text" id="name" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter your name" [value]="this.profileInfo?.name">
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="lastName" class="inline-block mb-2 text-base font-medium">Last Name *</label>
+                            <input type="text" formControlName="lastName" id="lastName" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter your lastName" [value]="this.profileInfo?.lastName">
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="email" class="inline-block mb-2 text-base font-medium">Email Address *</label>
+                            <input formControlName="email" type="email" id="email" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter your email address" [value]="this.profileInfo?.email">
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="phoneNumber" class="inline-block mb-2 text-base font-medium">Phone Number *</label>
+                            <input formControlName="phoneNumber" type="text" id="phoneNumber" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter your phone number" [value]="this.profileInfo?.phoneNumber">
+                        </div><!--end col-->
+                        <div class="xl:col-span-6">
+                            <label for="address" class="inline-block mb-2 text-base font-medium">Address *</label>
+                            <input  formControlName="address" type="text" id="address" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter your address" [value]="this.profileInfo?.address">
+                        </div><!--end col-->
+                        <div class="xl:col-span-6" *ngIf="withPermissions(['UPDATE'])">
+                            <label for="identification" class="inline-block mb-2 text-base font-medium">Identification *</label>
+                            <input  formControlName="identification" type="text" id="identification" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter your identification" [value]="this.profileInfo?.dni">
+                        </div><!--end col-->
+                    </div>
+                    <div class="grid grid-cols-1 gap-5 xl:grid-cols-12 mt-5">
+                        <div class="xl:col-span-4">
+                            <label for="newPassword" class="inline-block mb-2 text-base font-medium">New Password*</label>
+                            <div class="relative">
+                                <input formControlName="password" autocomplete="off" type="password" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" id="newPassword" placeholder="Enter new password">
+                                <button class="absolute top-2 ltr:right-4 rtl:left-4 " type="button"><i class="align-middle ri-eye-fill text-slate-500 dark:text-zink-200"></i></button>
+                            </div>
+                        </div><!--end col-->
+                        <div class="xl:col-span-4">
+                            <label for="confirm" class="inline-block mb-2 text-base font-medium">Confirm Password*</label>
+                            <div class="relative">
+                                <input formControlName="passwordConfirmation" autocomplete="off" type="password" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" id="confirm" placeholder="Confirm password">
+                                <button class="absolute top-2 ltr:right-4 rtl:left-4 " type="button"><i class="align-middle ri-eye-fill text-slate-500 dark:text-zink-200"></i></button>
+                            </div>
+                        </div><!--end col-->
+                        <div *ngIf="profileForm.errors?.['passwordMismatch'] && profileForm.get('passwordConfirmation')?.touched">
+                            <label class="text-red-500 text-sm">Passwords do not match</label>
+                        </div>
+
+
+                    </div><!--end grid-->
+                    <div class="flex justify-end mt-6 gap-x-4">
+                        <button type="submit" [disabled]="checkPassword(profileForm)"
+                            class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                            Update
+                        </button>
+                    </div>
+                </form><!--end form-->
+            </div>
+        </div>
+    </mn-tab-pane>
+</div>

@@ -1,1 +1,19 @@
-<h1>Page Dashboard</h1>
+<div class="py-1">
+  <!-- Title -->
+    <h2 class="font-semibold leading-tight pt-0 pb-5 pl-5
+     text-blue-600">Dashboard</h2>
+</div>
+
+<!-- Overview -->
+<div class="grid grid-cols-4 gap-4">
+     @for (menu of this.menuItems; track $index) { 
+        <div *ngIf = "withRoles(menu.roles!)"
+        class="text-center card p-3 bg-gradient-to-tr from-blue-500 to-blue-300 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] w-full">
+            <div class="p-2 rounded-full text-center w-fit bg-white/30 shadow-md border-transparent text-white flex justify-self-end hover:shadow-none hover: border hover:border-blue-400/70" [routerLink]="menu.path">
+                <lucide-icon name="arrow-up-right"></lucide-icon>
+            </div>
+            <div [innerHTML]="getMenuIcon(menu.label)"></div>
+            <p class="text-white dark:text-zink-200 text-md pt-3">{{menu.label}}</p>
+        </div>
+    }
+</div>

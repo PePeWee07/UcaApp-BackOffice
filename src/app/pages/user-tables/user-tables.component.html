@@ -1,128 +1,137 @@
 <div class="py-1">
   <!-- Title -->
   <div>
-    <h2 class="text-2xl font-semibold leading-tight">Users</h2>
+    <h2 class="text-2xl font-semibold leading-tight mb-5 text-blue-600">Admin Users</h2>
   </div>
 
   <!-- Filters -->
-  <div class="my-2 flex sm:flex-row flex-col">
-    <div class="flex flex-row mb-1 sm:mb-0">
-      <!-- Page Size -->
-      <div class="relative">
-        <select
-          (change)="onPageSizeChange($any($event.target).value)"
-          class="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-        >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-        </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-        >
-          <svg
-            class="fill-current h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-            />
-          </svg>
-        </div>
-      </div>
-      <!-- SortBy -->
-      <div class="relative">
-        <select
-          (change)="onSortByChange($any($event.target).value)"
-          class="h-full border-t block appearance-none w-full sm:rounded-r-none sm:border-r-1 border-r border-b bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
-        >
-          @for (item of keysUser; track $index) {
-          <option>{{ item }}</option>
+     <div class="!py-3.5 card-body bg-white  p-2 border-solid rounded-l border-slate-200 dark:border-zink-500" style="box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.15);">
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <div class="relative xl:col-span-1"> <!-- start column -->
+              <div class="flex flex-row gap-x-0 justify-left">
+                  <!-- Page Size -->
+                  <div class="relative">
+                    <select
+                      (change)="onPageSizeChange($any($event.target).value)"
+                      class="h-full rounded-l border block appearance-none w-full bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                    </select>
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                    >
+                      <svg
+                        class="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <!-- SortBy -->
+                  <div class="relative">
+                    <select
+                      (change)="onSortByChange($any($event.target).value)"
+                      class="h-full border-t block appearance-none w-full sm:rounded-r-none sm:border-r-1 border-r border-b bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-blue-500"
+                    >
+                      @for (item of keysUser; track $index) {
+                      <option>{{ item }}</option>
 
-          }
-        </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-        >
-          <svg
-            class="fill-current h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-            />
-          </svg>
-        </div>
-      </div>
-      <!-- Direction -->
-      <div class="relative">
-        <select
-          (change)="onDirectionChange($any($event.target).value)"
-          class="h-full rounded-r border-t block appearance-none w-full sm:rounded-r-none sm:border-r-0 border-r border-b bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
-        >
-          <option value="asc">Asc</option>
-          <option value="desc">Desc</option>
-        </select>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-        >
-          <svg
-            class="fill-current h-4 w-4"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-          >
-            <path
-              d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
-    <!-- Search -->
-    <!-- Search -->
-    <div class="block relative">
-      <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
-        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
-          <path
-            d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"
-          ></path>
-        </svg>
-      </span>
-      <input
-        class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
-        type="text"
-        [(ngModel)]="searchText"
-        placeholder="Search users..."
-        (keyup)="onSearch($event)"
-        (keyup.enter)="getUsers()"
-      />
-    </div>
+                      }
+                    </select>
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                    >
+                      <svg
+                        class="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <!-- Direction -->
+                  <div class="relative">
+                    <select
+                      (change)="onDirectionChange($any($event.target).value)"
+                      class="h-full rounded-r border block appearance-none w-full bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    >
+                      <option value="asc">Asc</option>
+                      <option value="desc">Desc</option>
+                    </select>
+                    <div
+                      class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+                    >
+                      <svg
+                        class="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+          </div><!--end col-->
 
-    <!-- Search Field Selector -->
-    <div class="mt-2">
-      <select
-        class="border px-2 py-1 rounded"
-        [(ngModel)]="selectedField"
-        (change)="getUsers()"
-      >
-        <option value="id">ID</option>
-        <option value="name">Name</option>
-        <option value="lastName">Last Name</option>
-        <option value="email">Email</option>
-        <option value="phoneNumber">Phone Number</option>
-        <option value="address">Address</option>
-        <option value="dni">DNI</option>
-      </select>
-    </div>
+          <div class="relative col-span-2 xl:col-start-3">
+            <div class="flex flex-row gap-x-0 justify-left">
+              <!-- Search -->
+              <div class="block relative justify-end"> <!-- start column -->
+                <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
+                  <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-gray-500">
+                    <path
+                      d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"
+                    ></path>
+                  </svg>
+                </span>
+                <input
+                  class="ltr:pl-20 pl-8 ltr:pr-8 search rounded-r-none border border-r-transparent form-input  outline-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-slate-100 disabled:border-slate-300 disabled:text-slate-500 dark:focus:border-custom-800 placeholder:text-slate-400"
+                  type="text"
+                  [(ngModel)]="searchText"
+                  placeholder="Search users..."
+                  (keyup)="onSearch($event)"
+                  (keyup.enter)="getUsers()"
+                />
+              </div>
 
-    <button
-      (click)="getUsers()"
-      class="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-    >
-      Search
-    </button>
+            <!-- Search Field Selector -->
+            <div class="mt-0 text-sm">
+              <select
+                class=" px-2 py-2.5 rounded-r border border-l-transparent border-slate-200 text-gray-400"
+                [(ngModel)]="selectedField"
+                (change)="getUsers()"
+              >
+                <option value="id">ID</option>
+                <option value="name">Name</option>
+                <option value="lastName">Last Name</option>
+                <option value="email">Email</option>
+                <option value="phoneNumber">Phone Number</option>
+                <option value="address">Address</option>
+                <option value="dni">DNI</option>
+              </select>
+            </div>
+
+            <button data-ripple-dark="true"
+              class="before:ease ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition-all before:absolute before:right-0 before:top-0 before:h-12 before:w-6 before:translate-x-12 before:rotate-6 before:bg-white before:opacity-10 before:duration-700 hover:shadow-green-500 hover:before:-translate-x-40"
+              (click)="getUsers()"
+            >
+              Search
+            </button>
+          </div>
+
+          </div><!--end col-->
+        </div><!--end grid-->
   </div>
 
   <!-- Table -->
@@ -257,26 +266,25 @@
               </p>
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-
               <!-- MODAL -->
-                <!-- <div mndropdown [placement]="(rowIndex >= itemsPerPage - 2)?'top-end':'bottom-end'" class="dropdown">
-                  <button mndropdownToggle class="flex items-center justify-center size-[30px] dropdown-toggle p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20" id="productAction1" data-bs-toggle="dropdown"><lucide-angular name="more-horizontal" class="size-3"></lucide-angular></button>
+                <div mndropdown [placement]="'top-end'" class="dropdown">
+                  <button mndropdownToggle class="flex items-center justify-center size-[30px] dropdown-toggle p-0 text-slate-500 btn bg-white hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20" id="productAction1" data-bs-toggle="dropdown"><lucide-angular name="more-horizontal" class="size-3"></lucide-angular></button>
                   <ul mndropdownMenu class="absolute z-50 py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600" aria-labelledby="productAction1">
                       <li>
-                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" routerLink="/product-overview"><lucide-angular name="eye" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular> <span class="align-middle">Overview</span></a>
+                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"><lucide-angular name="eye" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular> <span class="align-middle"> Overview</span></a>
                       </li>
-                      <li>
-                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" routerLink="/product-create"><lucide-angular name="file-edit" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular> <span class="align-middle">Edit</span></a>
-                      </li>
-                      <li>
-                        <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" routerLink="/product-create"><lucide-angular name="trash-2" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular> <span class="align-middle">Edit</span></a>
+                      <li *ngIf="withPermissions(['UPDATE', 'CREATE', 'DELETE'])">
+                          <a [routerLink]="['/roles-permissions', {'id': user.id}]" class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" routerLink="/product-create"><lucide-angular name="file-edit" [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"></lucide-angular> <span class="align-middle"> Edit Roles/Permissions</span></a>
                       </li>
                   </ul>
-                </div> -->
+                </div>
 
             </td>
           </tr>
           }
+          <tr *ngIf="userList.length == 0">
+            <td class="flex px-5 py-5 border-b border-gray-200 bg-white text-sm justify-end">No Users Found</td>
+          </tr>
         </tbody>
       </table>
 

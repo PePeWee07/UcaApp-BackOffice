@@ -9,12 +9,14 @@ import { debounceTime, Subject } from 'rxjs';
 import { TooltipModule, TooltipOptions } from 'ng2-tooltip-directive';
 import { CommonModule } from '@angular/common';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
-// import { MnDropdownComponent } from '../../component/dropdown';
+import { MnDropdownComponent } from '../../component/dropdown';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-user-tables',
   standalone: true,
-  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule ],
+  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule, MnDropdownComponent, RouterLink ],
   templateUrl: './user-tables.component.html',
   styleUrl: './user-tables.component.scss',
   providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
@@ -24,6 +26,7 @@ export class UserTablesComponent {
   constructor(
     private adminService: UserAdminService,
     private sanitizer: DomSanitizer, // dar permiso HTML ( this.sanitizer.bypassSecurityTrustHtml)
+    private authService: AuthService,
     @Inject(AlertToastService) private alertToast: AlertToastService
   ) {}
 
@@ -49,6 +52,11 @@ export class UserTablesComponent {
     });
 
     this.getUsers();
+  }
+
+    // Verificar si el usuario tiene los permisos necessarios
+  withPermissions(permissions: string[]): boolean{
+    return this.authService.includesPermission(permissions);
   }
 
   // Obtener el filtro de búsqueda

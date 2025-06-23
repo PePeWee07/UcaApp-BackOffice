@@ -35,7 +35,7 @@ export class ChatHistoryComponent{
     filteredUsers: Content[] = [];
     isSelected: string = '';
     page: number = 0;
-    pageSize: number = 10;
+    pageSize: number = 5;
     totalPages: number = 1;
     totalElements: number = 0;
     pagesArray: number[] = [];
@@ -186,6 +186,7 @@ export class ChatHistoryComponent{
         }
         this.filteredUsers = users.content ?? [];
         this.page = users.page?.number ?? 0;
+        this.pageSize = users.page?.size  ?? 5;
         this.totalPages = users.page?.totalPages ?? 0;
         this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
         console.log('Filtered Users: ', this.filteredUsers)

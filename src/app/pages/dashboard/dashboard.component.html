@@ -1,7 +1,7 @@
 <div class="py-1">
   <!-- Title -->
     <h2 class="font-semibold leading-tight pt-0 pb-5 pl-5
-     text-blue-600">Dashboard</h2>
+     text-blue-600">{{'Dashboard' | translate}}</h2>
 </div>
 
 <!-- Overview -->
@@ -13,7 +13,7 @@
                 <lucide-icon name="arrow-up-right"></lucide-icon>
             </div>
             <div [innerHTML]="getMenuIcon(menu.label)"></div>
-            <p class="text-white dark:text-zink-200 text-md pt-3">{{menu.label}}</p>
+            <p class="text-white dark:text-zink-200 text-md pt-3">{{menu.label | translate}}</p>
         </div>
     }
 </div>

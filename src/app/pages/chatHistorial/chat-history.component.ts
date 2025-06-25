@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
 import { CommonModule } from '@angular/common';
-import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
+import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, Trash, icons } from 'lucide-angular';
 import { ChatHistoryService } from '../../core/services/virtualAssistant/chatHistory.service';
 import { ChatAssistenteVirtual, History } from '../../models/chatAssistenteVirtual';
 import { WhatsAppUser,ERPUser, RolesUsuario } from '../../models/models_assistantVirtual/WhatsAppUser';
@@ -12,14 +12,16 @@ import { WhatsAppUserList, Content } from '../../models/models_assistantVirtual/
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, LucideAngularModule, FormsModule],
+  imports: [CommonModule, SimplebarAngularModule, LucideAngularModule, FormsModule, TranslateModule],
   templateUrl: './chat-history.component.html',
   styleUrl: './chat-history.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
 })
 export class ChatHistoryComponent{
   constructor(
@@ -28,8 +30,9 @@ export class ChatHistoryComponent{
     private route: ActivatedRoute,
     private authService: AuthService,
     private sanitizer: DomSanitizer, 
-        @Inject(AlertToastService) private alertToast: AlertToastService
-    ) {}
+    @Inject(AlertToastService) private alertToast: AlertToastService,
+    public translate: TranslateService
+    ) { translate.setDefaultLang('en'); }
 
     // parametros para obtener la lista de usuarios
     filteredUsers: Content[] = [];
@@ -79,7 +82,6 @@ export class ChatHistoryComponent{
       // Obtener los parametros de la ruta
       this.identificacion = params['identificacion'];  
       let phone = params['phoneNumber']; 
-      console.log(this.identificacion)
       this.startDate = params['startDate'];
       this.endDate = params['endDate'];
 
@@ -155,7 +157,7 @@ export class ChatHistoryComponent{
         .filter((key: string) =>
           allowedKeys.includes(key)
         ).map((key: string) => 
-          key === 'whatsappPhone' ? 'Telefono' : key
+          key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
         )
         
         this.erpUserKeys = Object.keys(this.erpUsers[0])
@@ -200,12 +202,9 @@ export class ChatHistoryComponent{
         this.userKeys = Object.keys(this.filteredUsers[0]).filter((key: string) =>
           allowedKeys.includes(key))
           .map((key: string) => 
-            key === 'whatsappPhone' ? 'Telefono' : key
+            key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
         )
 
-        this.erpUserKeys = Object.keys(this.erpUsers[0]).filter((key: string) =>
-          allowedKeys.includes(key)
-        )
         if (this.chatType != 1) {
           this.chatType = 3;
         }
@@ -251,7 +250,7 @@ export class ChatHistoryComponent{
           this.userKeys = Object.keys(this.filteredUsers[0]).filter((key) =>
             allowedKeys.includes(key))
             .map((key: string) => 
-              key === 'whatsappPhone' ? 'Telefono' : key
+              key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
           ) as (keyof Content)[];
 
           this.erpUserKeys = Object.keys(this.erpUsers[0]).filter((key: string)=>
@@ -304,7 +303,7 @@ export class ChatHistoryComponent{
         .filter((key: string) =>
           allowedKeys.includes(key)
         ).map((key: string) => 
-          key === 'whatsappPhone' ? 'Telefono' : key 
+          key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
         ) as (keyof Content) [];
 
         // Verificar si el usuario tiene hilo y buscar el historial

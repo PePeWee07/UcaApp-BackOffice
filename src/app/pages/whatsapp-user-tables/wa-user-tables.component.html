@@ -1,7 +1,7 @@
 <div class="py-1">
   <!-- Title -->
   <div>
-    <h2 class="text-2xl font-semibold leading-tight mb-5 text-blue-600">Chat Users</h2>
+    <h2 class="text-2xl font-semibold leading-tight mb-5 text-blue-600">{{'Chat User List' | translate}}</h2>
   </div>
 
     <!-- Filters -->
@@ -39,7 +39,7 @@
                       class="h-full border-t block appearance-none w-full sm:rounded-r-none sm:border-r-1 border-r border-b bg-white border-gray-300 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-blue-500"
                     >
                       @for (item of userKeys; track $index) {
-                        <option value="{{item}}">{{item}}</option>
+                        <option value="{{item}}">{{item | translate}}</option>
                       }
                     </select>
                     <div
@@ -110,8 +110,8 @@
                 class=" px-2 py-2.5 rounded-r border border-l-transparent border-slate-200 text-gray-400"
                 [(ngModel)]="selectedField"
               >
-                <option value="whatsappPhone">Telefono</option>
-                <option value="identificacion">Identificacion</option>
+                <option value="whatsappPhone">{{'Telefono' | translate}}</option>
+                <option value="identificacion">{{'Identificacion' | translate}}</option>
               </select>
             </div>
 
@@ -119,7 +119,7 @@
               class="before:ease ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-00 transition-all  hover:shadow-lg before:absolute before:right-0 before:top-0 before:h-12 before:w-6 before:translate-x-12 before:rotate-6 before:bg-white before:opacity-10 before:duration-700 hover:before:-translate-x-40"
               (click)="searchUser(selectedField)"
             >
-              Search
+              {{'Search' | translate}}
             </button>
           </div>
 
@@ -134,11 +134,11 @@
         <thead>
           <tr>
             @for (key of tableKeys; track $index) {
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-slate-100 text-left text-xs font-semibold text-gray-700 uppercase ">
-              {{ key || '-' }}
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-slate-100 text-left text-xs font-semibold text-gray-700 uppercase">
+              {{ key | translate}}
             </th>
             }
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-slate-100 text-left text-xs font-semibold text-gray-700 uppercase ">Open Chat</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-slate-100 text-left text-xs font-semibold text-gray-700 uppercase ">{{'Open Chat' | translate}}</th>
           </tr>
         </thead>
         <tbody>
@@ -175,7 +175,7 @@
                          />
                   <div class="relative w-11 h-6 bg-green-300 rounded-full peer peer-focus:ring-2 peer-focus:ring-green-300 dark:peer-focus:ring-gray-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white  after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-400 dark:peer-checked:bg-red-400"></div>
                     <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-gray-700/60 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-md">
-                      {{user.block ? 'Unblock': 'Block'}}
+                      {{user.block ? 'unblock': 'block' | translate | titlecase}}
                     </div>
                 </label>
               </td>

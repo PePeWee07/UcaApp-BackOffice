@@ -1,11 +1,11 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-100">
   <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md hover:shadow-blue-400/50">
-    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">{{'login' | translate}}</h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="login()" class="space-y-6">
 
       <div class="flex flex-col">
-        <label for="username" class="mb-2 font-semibold" i18n>Username</label>
+        <label for="username" class="mb-2 font-semibold" >{{'Username' | translate}}</label>
         <div class="block relative">
           <span class="p-3 h-full absolute inset-y-0 left-0 flex items-center pl-2 text-blue-600"
             [ngClass]="{'text-red-500': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}">
@@ -30,7 +30,7 @@
       </div>
 
       <div class="flex flex-col">
-        <label for="password" class="mb-2 font-semibold" i18n>Password</label>
+        <label for="password" class="mb-2 font-semibold" i18n>{{'password' | translate}}</label>
         <div class="block relative">
           <span class="p-3 h-full absolute inset-y-0 left-0 flex items-center pl-2 text-blue-600"
                 [ngClass]="{'text-red-500': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}">
@@ -57,7 +57,7 @@
           type="submit"
           class="relative flex h-[50px] w-40 items-center rounded-full justify-center overflow-hidden bg-blue-600 font-medium text-white shadow-2xl transition-all duration-300 before:absolute before:inset-0 before:border-0 before:border-white before:duration-100 before:ease-linear hover:bg-white hover:text-blue-600 hover:shadow-blue-600 hover:before:border-[25px]"
           [disabled]="loginForm.invalid">
-          <span class="relative z-10">Login</span>
+          <span class="relative z-10">{{'login' | translate}}</span>
         </button>
       </div>
     </form>

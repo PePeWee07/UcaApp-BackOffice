@@ -1,7 +1,7 @@
 <div class="py-1">
   <!-- Title -->
-    <h2 class="font-semibold leading-tight pt-0 pb-5 pl-5
-     text-blue-600" i18n="@@pageTitle">Auditoria</h2>
+    <h2 class="font-semibold pt-0 pb-5 pl-5
+     text-blue-600" >{{'Audits' | translate}}</h2>
 </div>
 
 <!-- Overview -->
@@ -12,14 +12,14 @@
                 <path d="M13 12h8"/><path d="M13 18h8"/><path d="M13 6h8"/><path d="M3 12h1"/><path d="M3 18h1"/><path d="M3 6h1"/><path d="M8 12h1"/><path d="M8 18h1"/><path d="M8 6h1"/>
             </svg>
         </div>
-        <h5 class="mt-2 mb-2 text-sm"><span class="counter-value" [countUp]="allAudits.length" ></span></h5>
-        <p i18n class="text-slate-500 dark:text-zink-200 text-sm">Total Audit Logs</p>
+        <h5 class="mt-2 mb-2 text-sm"><span class="counter-value" [countUp]="this.totalActions" ></span></h5>
+        <p i18n class="text-slate-500 dark:text-zink-200 text-sm">{{'Total' | translate}} {{'Audits' | translate}}</p>
     </div>
     @for (count of this.tableCounts; track $index) {
-    <div class="text-center card p-2 border border-gray-200">
-        <div [innerHTML]="getTableIcon(count.table)"></div>
+    <div class="text-center card p-2 border border-gray-200" (click)="openTable(count.table_name)">
+        <div [innerHTML]="getTableIcon(count.table_name)"></div>
         <h5 class="mt-2 mb-2 text-sm"><span class="counter-value" [countUp]="count.count" ></span></h5>
-        <p class="text-slate-500 dark:text-zink-200 text-sm">{{ count.table  }}</p>
+        <p class="text-slate-500 dark:text-zink-200 text-sm">{{ count.table_name }}</p>
     </div>
     }
 </div>
@@ -30,14 +30,14 @@
         <div class="grid grid-cols-1 gap-2 xl:grid-cols-12">
             <!-- Search -->
             <div class="xl:col-span-2">
-            <p class="text-sm pb-2 text-gray-400">Global Search</p>
+            <p class="text-sm pb-2 text-gray-400">{{'Global Search' | translate}}</p>
               <div class="block relative justify-end text-sm"><!-- start column -->
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                     <lucide-icon name="search" [size]="16" [strokeWidth]="1.5"></lucide-icon>
                 </span>
                 <div class="flex">
                     <input
-                    class="ltr:pl-20 pl-8 py-1 ltr:pr-8 search rounded-r-none border form-input  outline-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-slate-100 disabled:border-slate-300 disabled:text-slate-500 dark:focus:border-custom-800 placeholder:text-slate-400"
+                    class="ltr:pl-20 pl-8 py-1 ltr:pr-8 rounded-r-none border form-input  outline-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-slate-100 disabled:border-slate-300 disabled:text-slate-500 dark:focus:border-custom-800 placeholder:text-slate-400"
                     type="text"
                     [(ngModel)]="searchText"
                     (keyup)="onSearch($event)"
@@ -45,10 +45,10 @@
                     placeholder="Search..."
                     />
                     <button data-ripple-dark="true"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-00"
+                        class="px-4 text-sm py-2 bg-blue-500 text-white rounded-r hover:bg-blue-00"
                         (click)="globalSearch(searchText!)"
                         >
-                        Search
+                        {{'Search' | translate}}
                     </button>
                 </div>
               </div>
@@ -56,7 +56,7 @@
 
             <!-- Search -->
             <div class="xl:col-span-2">
-                <p class="text-sm pb-2 text-gray-400">Search event_id</p>
+                <p class="text-sm pb-2 text-gray-400">{{'Search' | translate}} event_id</p>
                 <div class="flex">
                         <input
                             class="ltr:pl-20 py-1 ltr:pr-2 rounded-l rounded-r-none border form-input  outline-none focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-slate-100 disabled:border-slate-300 disabled:text-slate-500 dark:focus:border-custom-800 placeholder:text-slate-400"
@@ -71,7 +71,7 @@
                         class="text-sm px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 hover:shadow-lg"
                         (click)="idSearch(this.searchNum!)"
                         >
-                        Search
+                        {{'Search' | translate}}
                     </button>
                 </div>
 
@@ -79,21 +79,21 @@
 
             <!-- Date Filter -->
             <div class="xl:col-start-5 w-fit" (change)="onListDateChange()">
-                <div class="text-sm pb-2 text-gray-400">Filter By Date</div>
-                <div class="flex rounded-l rounded-r py-0 border border-slate-200 bg-white">
-                    <div class="relative py-1.5 px-3">
-                        <input [(ngModel)]="this.listStartDate"  id="datepicker-range-start" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start">
-                    </div>
-                    <span class="text-black pt-2 text-sm">-</span>
-                    <div class="relative  py-1.5 px-3">
-                        <input [(ngModel)]="this.listEndDate" id="datepicker-range-end" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end">
+                <p class="text-sm pb-2 text-gray-400">{{'Filter By Date' | translate}}</p>
+                <div class=" leading-tight rounded-l rounded-r border border-slate-200 bg-white">
+                    <div class="flex px-3 gap-x-3">
+                        <input [(ngModel)]="this.listStartDate"  id="datepicker-range-start" type="date" class="ltr:pl-20 py-2 ltr:pr-2 border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start">
+       
+                        <span class="text-black pt-2 text-sm">-</span>
+       
+                        <input [(ngModel)]="this.listEndDate" id="datepicker-range-end" type="date" class="ltr:pl-20 py-2 ltr:pr-2 border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end">
                     </div>
                 </div>
             </div>
 
             <!-- Select Table -->
-            <div class="xl:col-span-2 xl:col-start-9">
-                <p class="text-sm pb-2 text-gray-400">View By Table</p>
+            <div class="xl:col-span-2 xl:col-start-8">
+                <p class="text-sm pb-2 text-gray-400">{{'View By Table' | translate}}</p>
                 <select class="form-input border-slate-200 focus:outline-none focus:border-custom-500 text-sm" 
                         (change)="getTable($any($event.target).value)"
                         [(ngModel)]="this.tableName">
@@ -104,32 +104,33 @@
                 </select>
             </div>
 
-            <!-- Direction -->
-            <div class="xl:col-span-1">
-                <p class="text-sm pb-2 text-gray-400">Direction</p>
+            <!-- Page Size -->
+            <div class="xl:col-span-1 justify-end">
+                <p class="text-sm pb-2 text-gray-400">{{'Page Size' | translate}}</p>
                 <select
-                    (change)="onDirectionChange($any($event.target).value)"
+                    (change)="onPageSizeChange($any($event.target).value)"
                     class="rounded-r rounded-l border  bg-white border-slate-200 text-gray-700 px-4 py-2 text-sm leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                 >
-                    <option value="asc">Asc</option>
-                    <option value="desc">Desc</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
                 </select>
             </div>
 
 
             <!-- All Audits -->
-            <div class="xl:col-span-1 content-end">
-                <div class="text-sm pb-2 text-gray-400">View All Logs</div>
-                <button class="border py-1 px-5 rounded-l rounded-r col-start-12 content-end"
-                (click)="getActions()"> All </button>
+            <div class="xl:col-span-2 xl:col-start-11">
+                <p class="text-sm pb-2 text-gray-400">{{'View All Logs' | translate}}</p>
+                <button class="leading-tight text-sm border py-2 px-5 rounded-l rounded-r"
+                (click)="getActions()"> {{'All' | translate}} </button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Tabla de Auditorias -->
-<div class="card p-0" *ngIf="withRoles(['ROLE_ADMIN'])">
-    <div class="card-body p-0 overflow-y-auto max-h-[calc(100vh_-_theme('spacing.10')_*_12)] flex z-0 rounded-l rounded-r" style="padding: 0;">
+<div class="relative card p-0" *ngIf="withRoles(['ROLE_ADMIN'])">
+    <div class="card-body p-0 overflow-y-auto max-h-[calc(100vh_-_theme('spacing.10')_*_7)] z-0 rounded-l rounded-r" style="padding: 0;">
         <table class="min-w-full leading-normal z-0 ">
             <thead class="sticky top-0 z-10">
             <tr class="text-gray-500 bg-gray-100 border-b-2">
@@ -206,73 +207,120 @@
                 </tr>
             </tbody>
         </table>
-        <!-- Detalles Auditorias -->
-        @for (audit of audits; track audit.event_id) {
-            <div *ngIf="this.selectAudit == audit.event_id"
-                class="z-10 absolute p-5 bg-white border w-fit overflow-y-auto h-[calc(100vh_-_theme('spacing.10')_*_12)] rounded-r rounded-l shadow-[4px_2px_6px_-2px_rgba(0,0,0,0.49)]"
-                >
-                <div class="grid grid-cols-2">
-                    <h5>Audit Details # {{this.selectAudit}}</h5>
-                    <lucide-icon name="x" class="flex text-gray-400 justify-end hover:text-blue-500" (click)="openDetails(audit.event_id)" ></lucide-icon>
-                </div>
-                <div class="overflow-hidden overflow-y-auto">
-                    <div class="grid grid-rows-2 grid-cols-4 gap-x-4 p-3 text-sm border rounded-l rounded-r my-3">
-                        <h6>{{allKeys[0]}}</h6><h6>{{allKeys[1]}}</h6><h6>{{allKeys[2]}}</h6><h6>{{allKeys[3]}}</h6>
-                        <p>{{audit.event_id}}</p><p>{{audit.schema_name}}</p><p>{{audit.table_name}}</p> <p>{{audit.relid}}</p>
-                        <h6>{{allKeys[13]}}</h6><h6>{{allKeys[4]}}</h6><h6>{{allKeys[8]}}</h6><h6>{{allKeys[9]}}</h6>
-                        <div><div [ngClass]="getAction(audit.action!)" class="bg-white"><p>{{ nameAction(audit.action!) }}</p></div></div>
-                        <p>{{audit.session_user_name}}</p>
-                        <p>{{audit.transaction_id}}</p>
-                        <p>{{audit.application_name}}</p>
+    </div>
+            <!-- Detalles Auditorias -->
+         <div class="">
+            @for (audit of audits; track audit.event_id) {
+                <div *ngIf="this.selectAudit == audit.event_id"
+                    class="z-10 top-0 p-3 absolute bg-white border w-fit overflow-y-auto h-[calc(100vh_-_theme('spacing.10')_*_12)] rounded-r rounded-l shadow-[4px_2px_6px_-2px_rgba(0,0,0,0.49)]"
+                    >
+                    <div class="grid grid-cols-2">
+                        <h5>Audit Details # {{this.selectAudit}}</h5>
+                        <lucide-icon name="x" class="flex text-gray-400 justify-end hover:text-blue-500" (click)="openDetails(audit.event_id)" ></lucide-icon>
                     </div>
-                    <div class="p-3 border rounded-l rounded-r my-3">
-                        <h6>Timestamps</h6>
-                        <div class="grid grid-cols-3 gap-x-4 text-sm">
-                            <p>{{audit.action_tstamp_clk | date: 'yy/M/d, h:mm:ssa'}}</p>
-                            <p>{{audit.action_tstamp_stm | date: 'yy/M/d, h:mm:ssa'}}</p>
-                            <p>{{audit.action_tstamp_tx | date: 'yy/M/d, h:mm:ssa'}}</p>
+                    <div class="overflow-hidden overflow-y-auto">
+                        <div class="grid grid-rows-2 grid-cols-4 gap-x-4 p-3 text-sm border rounded-l rounded-r my-3">
+                            <h6>{{allKeys[0]}}</h6><h6>{{allKeys[1]}}</h6><h6>{{allKeys[2]}}</h6><h6>{{allKeys[3]}}</h6>
+                            <p>{{audit.event_id}}</p><p>{{audit.schema_name}}</p><p>{{audit.table_name}}</p> <p>{{audit.relid}}</p>
+                            <h6>{{allKeys[13]}}</h6><h6>{{allKeys[4]}}</h6><h6>{{allKeys[8]}}</h6><h6>{{allKeys[9]}}</h6>
+                            <div><div [ngClass]="getAction(audit.action!)" class="bg-white"><p>{{ nameAction(audit.action!) }}</p></div></div>
+                            <p>{{audit.session_user_name}}</p>
+                            <p>{{audit.transaction_id}}</p>
+                            <p>{{audit.application_name}}</p>
                         </div>
-                    </div>
-                    <div class="p-3 border rounded-l rounded-r my-3">
-                        <h6>Changed Fields</h6>
-                        @if(audit.changed_fields){
-                            <div class="text-sm">
-                                <p *ngFor="let item of changedFields">
+                        <div class="p-3 border rounded-l rounded-r my-3">
+                            <h6>Timestamps</h6>
+                            <div class="grid grid-cols-3 gap-x-4 text-sm">
+                                <p>{{audit.action_tstamp_clk | date: 'yy/M/d, h:mm:ssa'}}</p>
+                                <p>{{audit.action_tstamp_stm | date: 'yy/M/d, h:mm:ssa'}}</p>
+                                <p>{{audit.action_tstamp_tx | date: 'yy/M/d, h:mm:ssa'}}</p>
+                            </div>
+                        </div>
+                        <div class="p-3 border rounded-l rounded-r my-3">
+                            <h6>Changed Fields</h6>
+                            @if(audit.changed_fields){
+                                <div class="text-sm">
+                                    <p *ngFor="let item of changedFields">
+                                            {{ item.key }}: {{ item.value }}
+                                    </p>
+                                </div>
+                            }@else {
+                                <p class="text-sm">N/A</p>
+                            }
+                        </div>
+                        <div class="p-3 my-3 border rounded-l rounded-r">
+                            <h6>Client Information</h6>
+                            <div class="grid grid-cols-2 p-3 text-sm wrap-anywhere">
+                                <h6>{{allKeys[10]}}</h6>
+                                <h6>{{allKeys[11]}}</h6><p>{{audit.client_port ?? 'N/A'}}</p>
+                                <div *ngIf="audit.client_addr">
+                                    <p *ngFor="let item of audit.client_addr | keyvalue">
                                         {{ item.key }}: {{ item.value }}
-                                </p>
-                            </div>
-                        }@else {
-                            <p class="text-sm">N/A</p>
-                        }
-                    </div>
-                    <div class="p-3 my-3 border rounded-l rounded-r">
-                        <h6>Client Information</h6>
-                        <div class="grid grid-cols-2 p-3 text-sm wrap-anywhere">
-                            <h6>{{allKeys[10]}}</h6>
-                            <h6>{{allKeys[11]}}</h6><p>{{audit.client_port ?? 'N/A'}}</p>
-                            <div *ngIf="audit.client_addr">
-                                <p *ngFor="let item of audit.client_addr | keyvalue">
-                                    {{ item.key }}: {{ item.value }}
-                                </p>
-                            </div>
-                            <p *ngIf="!audit.client_addr" class="text-sm">N/A</p>
-                            <h6>{{allKeys[12]}}: </h6>
-                            <div class="row-start-4 col-start-1 col-span-2 whitespace-no-wrap w-[20rem] wrap-anywhere">
-                                <p class=" text-sm text-wrap break-all">{{audit.client_query}}</p>
+                                    </p>
+                                </div>
+                                <p *ngIf="!audit.client_addr" class="text-sm">N/A</p>
+                                <h6>{{allKeys[12]}}: </h6>
+                                <div class="row-start-4 col-start-1 col-span-2 whitespace-no-wrap w-[20rem] wrap-anywhere">
+                                    <p class=" text-sm text-wrap break-all">{{audit.client_query}}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-3 border rounded-l rounded-r">
-                        <h6>Row Data</h6>
-                        <div *ngIf="this.rowData" class="text-sm">
-                            <div *ngFor="let data of rowData" class="flex gap-4 w-[35rem] whitespace-no-wrap wrap-anywhere">
-                                <p class="font-medium">{{data.key}}:</p>
-                                <p class="text-wrap break-all">{{data.value ?? 'N/A'}}</p>
+                        <div class="p-3 border rounded-l rounded-r">
+                            <h6>Row Data</h6>
+                            <div *ngIf="this.rowData" class="text-sm">
+                                <div *ngFor="let data of rowData" class="flex gap-4 w-[35rem] whitespace-no-wrap wrap-anywhere">
+                                    <p class="font-medium">{{data.key}}:</p>
+                                    <p class="text-wrap break-all">{{data.value ?? 'N/A'}}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            }
+        </div>
+    <!-- Pagination -->
+    <div class="flex flex-col w-full">
+        <div class="px-2 py-5 pt-0 mt-2 bg-white flex flex-col xs:flex-row items-center xs:justify-between">
+            <!-- Counter Page -->
+            <div class="inline-flex my-2 xs:mt-0 text-sm"> 
+                <!-- Previous Page -->
+                <button
+                [disabled]="page === 0"
+                (click)="previousPage()"
+                class=" hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 hover:text-white px-2py-0 rounded-l transition duration-300 ease-in-out hover:bg-blue-500 hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
+                >
+                <lucide-icon name="chevron-left" [size]="20" [strokeWidth]="1"></lucide-icon>
+                </button>
+
+                <!-- Page Numbers -->
+                @for (i of pagesArray; track $index) {
+                <ng-container *ngIf="i === -1">
+                    <button disabled class="px-2 py-1 text-gray-500 cursor-default">…</button>
+                </ng-container>
+                <ng-container *ngIf="i !== -1">
+                    <button
+                    [class.active]="i === page"
+                    (click)="goToPage(i)"
+                    class="px-2 hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 hover:text-white py-1 transition duration-300 ease-in-out text-gray-800 hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
+                    >
+                    {{ i + 1 }}
+                    </button>
+                </ng-container>
+                }
+
+                <!-- Next Page -->
+                <button
+                [disabled]="page >= totalPages - 1"
+                (click)="nextPage()"
+                class="hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 hover:text-white px-2 py-0 rounded-r transition duration-300 ease-in-out hover:bg-blue-500 text-black hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 "
+                >
+                <lucide-icon name="chevron-right" [size]="20" [strokeWidth]="1"></lucide-icon>
+                </button>
             </div>
-        }
+            <span class="text-xs xs:text-sm text-gray-900">
+                Showing {{ page + 1 }} of {{ totalPages }} pages of
+                {{ totalElements }} Entries
+            </span>
+        </div>
     </div>
 </div>

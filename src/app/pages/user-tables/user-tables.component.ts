@@ -12,11 +12,13 @@ import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lu
 import { MnDropdownComponent } from '../../component/dropdown';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-user-tables',
   standalone: true,
-  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule, MnDropdownComponent, RouterLink ],
+  imports: [ FormsModule, TooltipModule, CommonModule, LucideAngularModule, MnDropdownComponent, RouterLink, TranslateModule ],
   templateUrl: './user-tables.component.html',
   styleUrl: './user-tables.component.scss',
   providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
@@ -27,8 +29,9 @@ export class UserTablesComponent {
     private adminService: UserAdminService,
     private sanitizer: DomSanitizer, // dar permiso HTML ( this.sanitizer.bypassSecurityTrustHtml)
     private authService: AuthService,
-    @Inject(AlertToastService) private alertToast: AlertToastService
-  ) {}
+    @Inject(AlertToastService) private alertToast: AlertToastService,
+    public translate: TranslateService
+  ) { translate.setDefaultLang('en'); }
 
   userList: Usuario[] = [];
   keysUser: string[] = [];

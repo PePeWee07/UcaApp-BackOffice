@@ -6,13 +6,16 @@ import { CommonModule } from '@angular/common';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
 import { AuthorizationError } from '../../models/errors/authorizationError';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, TranslateModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  providers: [ LanguageService]
 })
 export class LoginComponent implements OnInit {
 
@@ -22,8 +25,9 @@ export class LoginComponent implements OnInit {
     @Inject(Router) private router: Router,
     private authService: AuthService,
     @Inject(AlertToastService) private alertToastService: AlertToastService,
-    private fb: FormBuilder   // FormBuilder para crear el formulario
-  ) {}
+    private fb: FormBuilder ,  // FormBuilder para crear el formulario
+    public translate: TranslateService,  // Servicio de traducción
+  ) { translate.setDefaultLang('en'); }
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {

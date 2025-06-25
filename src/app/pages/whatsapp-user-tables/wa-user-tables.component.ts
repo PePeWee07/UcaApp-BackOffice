@@ -10,22 +10,25 @@ import { Content, WhatsAppUserList } from '../../models/models_assistantVirtual/
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { UserTicket } from '../../models/models_assistantVirtual/WhatsAppUser';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'whatsapp-user-tables',
   standalone: true,
-  imports: [ FormsModule, CommonModule, LucideAngularModule, RouterLink],
+  imports: [ FormsModule, CommonModule, LucideAngularModule, RouterLink, TranslateModule],
   templateUrl: './wa-user-tables.component.html',
   styleUrl: './wa-user-tables.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
 })
 export class WhatsAppUserTablesComponent implements OnInit {
   constructor(
     private WhatsAppUserListService: UserListService,
     private authService: AuthService,
     private sanitizer: DomSanitizer,
-    @Inject(AlertToastService) private alertToast: AlertToastService
-  ) {}
+    @Inject(AlertToastService) private alertToast: AlertToastService,
+    public translate: TranslateService,
+  ) { translate.setDefaultLang('en'); }
 
   // Parametros para la tabla de usuarios
   userList: Content[] = [];
@@ -173,9 +176,12 @@ export class WhatsAppUserTablesComponent implements OnInit {
         this.tableKeys = allowedKeys.filter((key) =>
           this.tableKeys.includes(key))
         .map((key: string) =>
-            key === 'whatsappPhone' ? 'Telefono': key &&
+            key === 'whatsappPhone' ? 'Phone Number': key &&
             key === 'conversationState' ? 'Conversation State' : key &&
             key === 'blockingReason' ? 'Blocking Reason' : key &&
+            key === 'nombres' ? 'Name' : key &&
+            key === 'apellidos' ? 'Last Name' : key &&
+            key === 'identificacion' ? 'Identification' : key &&
             key === 'emailInstitucional' ? 'Email': key
         )
 

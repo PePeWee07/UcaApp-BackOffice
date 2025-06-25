@@ -15,8 +15,8 @@ export class ActionLogService {
   constructor(private http: HttpClient) { }
 
   //lista de todas las auditorias
-  getActions(): Observable <Acciones>{
-    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions`);
+  getActions(url: string): Observable <Acciones>{
+    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions?${url}`);
   }
 
     // obtener accion por id   
@@ -28,11 +28,19 @@ export class ActionLogService {
     return this.http.get<{ table_name: string }[]>(`${this.Url}/v2/audit/actions/tables`)
   }
 
-  getTable(tableName:string): Observable<Acciones>{
-    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions/by-table/${tableName}`);
+  getTable(tableName:string, url: string): Observable<Acciones>{
+    console.log(`${this.Url}/v2/audit/actions/by-table/${tableName}?${url}`)
+    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions/by-table/${tableName}?${url}`);
   }
 
-  searchOnTables(searchParam: string): Observable <Acciones>{
-    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions/search?searchParam=${searchParam}`);
+  searchOnTables(searchParam: string, url: string): Observable <Acciones>{
+    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions/search?searchParam=${searchParam}&${url}`);
+  }
+
+  getActionsByDate(startDate: string, endDate: string, url: string): Observable<Acciones> {
+    return this.http.get<Acciones>(`${this.Url}/v2/audit/actions/by-date?startDate=${startDate}&endDate=${endDate}&${url}`);
+  }
+  countActions() {
+    return this.http.get<any>(`${this.Url}/v2/audit/actions/count`);
   }
 }

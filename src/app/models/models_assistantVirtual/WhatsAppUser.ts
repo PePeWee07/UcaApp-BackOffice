@@ -14,6 +14,7 @@ export interface WhatsAppUser {
     identificacion?:     string;
     chatSessions?:       ChatSession[];
     erpUser?:            ERPUser;
+    userTickets:         UserTicket[];
 }
 
 export interface ChatSession {
@@ -54,3 +55,10 @@ export interface DetallesRol {
     nombreRol?:            string;
     unidadOrganizativa?:   string;
 }
+
+export interface UserTicket {
+    id:                number;
+    name:              string;
+    status:            string;
+}
+

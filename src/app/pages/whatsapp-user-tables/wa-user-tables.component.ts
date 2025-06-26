@@ -9,28 +9,37 @@ import { UserListService} from '../../core/services/virtualAssistant/userlist.se
 import { Content, WhatsAppUserList } from '../../models/models_assistantVirtual/WhatsAppUserList';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { UserTicket } from '../../models/models_assistantVirtual/WhatsAppUser';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'whatsapp-user-tables',
   standalone: true,
-  imports: [ FormsModule, CommonModule, LucideAngularModule, RouterLink],
+  imports: [ FormsModule, CommonModule, LucideAngularModule, RouterLink, TranslateModule],
   templateUrl: './wa-user-tables.component.html',
   styleUrl: './wa-user-tables.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
 })
 export class WhatsAppUserTablesComponent implements OnInit {
   constructor(
     private WhatsAppUserListService: UserListService,
     private authService: AuthService,
     private sanitizer: DomSanitizer,
-    @Inject(AlertToastService) private alertToast: AlertToastService
-  ) {}
+    @Inject(AlertToastService) private alertToast: AlertToastService,
+    public translate: TranslateService,
+  ) { translate.setDefaultLang('en'); }
 
   // Parametros para la tabla de usuarios
   userList: Content[] = [];
   userKeys: string[] = [];
   tableKeys: string[] = [];
   chatSessionKeys: string[] = [];
+
+  // userTickets: ({ key: string; value: unknown; })[] = [];
+  userTickets: UserTicket[] = [];
+  selectedTicket: number | null = null;
+  openTickets: number | null = null;
 
   // Parametros para la informacion de un usuario
   selectedUser: number | null = null;
@@ -161,25 +170,27 @@ export class WhatsAppUserTablesComponent implements OnInit {
         .filter((key: string) =>
             key !== 'chatSessions' && key !== 'erpUser'
         ) as (keyof Content)[];
-          
     
         // Obtener los keys que se veran en la tabla  
         this.tableKeys = [...this.userKeys, ...this.erpUserKeys]        
         this.tableKeys = allowedKeys.filter((key) =>
           this.tableKeys.includes(key))
         .map((key: string) =>
-            key === 'whatsappPhone' ? 'Telefono': key &&
+            key === 'whatsappPhone' ? 'Phone Number': key &&
             key === 'conversationState' ? 'Conversation State' : key &&
             key === 'blockingReason' ? 'Blocking Reason' : key &&
+            key === 'nombres' ? 'Name' : key &&
+            key === 'apellidos' ? 'Last Name' : key &&
+            key === 'identificacion' ? 'Identification' : key &&
             key === 'emailInstitucional' ? 'Email': key
         )
-        
+
+        // Obtener los keys para los roles
         this.userList[0].erpUser?.rolesUsuario?.forEach( rol =>
           rol.detallesRol?.forEach(detalle =>
             this.rolKeys.push(detalle)
           )
         )
-        // Obtener los keys para los roles
         this.rolKeys = Object.keys(this.rolKeys[0])
         .map((key: string) =>
           key === 'nombreCarrera' ? 'Carrera': key &&
@@ -195,11 +206,17 @@ export class WhatsAppUserTablesComponent implements OnInit {
     });
   }
 
+
   // Metodo para desplegar mas informacion del usuario
   toggleUser(userId: number){
     if(this.withPermissions(['READ'])){
       this.selectedUser = this.selectedUser === userId ? null : userId;
     }
+  }
+
+  // Metodo para desplegar los chat sessions
+  toggleSessions(userId: number){
+    this.openSessions = this.openSessions === userId ? null : userId
   }
 
   // Metodo para seleccionar un chat session
@@ -212,6 +229,10 @@ export class WhatsAppUserTablesComponent implements OnInit {
   // Metodo para ver los detalles de rol
   openRole(index: number){
     this.selectedRol = this.selectedRol === index ? -1 : index;
+  }
+
+  toggleTickets(userId: number) {
+    this.openTickets = this.openTickets === userId ? null : userId;
   }
 
   onSortByChange(value: string) {
@@ -285,11 +306,6 @@ export class WhatsAppUserTablesComponent implements OnInit {
         console.error('Error al cambiar el estado del usuario:', err);
       }
         });
-  }
-  
-  // Metodo para despleagar los chat sessions
-  toggleSessions(userId: number){
-    this.openSessions = this.openSessions === userId ? null : userId
   }
 
   getConversationState(state: string): SafeHtml{

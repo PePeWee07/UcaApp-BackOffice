@@ -1,7 +1,7 @@
 <div class="py-1">
   <!-- Title -->
   <div>
-    <h2 class="text-2xl font-semibold leading-tight pt-0 pb-5 pl-10 text-blue-600">History</h2>
+    <h2 class="text-2xl font-semibold leading-tight pt-0 pb-5 pl-10 text-blue-600">{{'History' | translate}}</h2>
   </div>
 
     <!-- Chat History-->
@@ -11,11 +11,11 @@
         <!-- User List Section -->
          <div class="block w-full  xl:block xl:w-80 shrink-0" *ngIf="withPermissions(['READ'])">
             <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_1.4)] card xl:h-[calc(100%_-_theme('spacing.5'))]">
-                <ngx-simplebar class="max-h-[calc(100vh_-_390px)] xl:max-h-[calc(100vh_-_300px)]">
+                <ngx-simplebar class="max-h-[calc(100vh_-_390px)] xl:max-h-[calc(100%_-_theme('spacing.5'))]">
                     <ul class="flex flex-col gap-1">
                         <div class=" border-b border-dashed">
                             <div class="flex items-center gap-3 pb-3">
-                                <h6 class="text-15 grow p-5 pb-2">USER LIST</h6>
+                                <h6 class="text-15 grow p-5 pb-2">{{'User List' | translate | uppercase}}</h6>
                             </div>
                             <!-- Search -->
                             <div class="mt-2 pb-2 px-2 flex">
@@ -24,7 +24,7 @@
                                     [(ngModel)]="searchText"
                                     (keyup)="onSearch($event)"
                                     (keyup.enter)="searchUser(searchFilter)"
-                                    class="pl-8 rtl:pr-8 search form-input border-slate-200 border-r-transparent rounded-r-none focus:outline-none focus:border-custom-500 disabled:bg-slate-100  disabled:text-slate-500 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Search" autocomplete="on">
+                                    class="pl-8 rtl:pr-8 search form-input border-slate-200 border-r-transparent rounded-r-none focus:outline-none focus:border-custom-500 disabled:bg-slate-100  disabled:text-slate-500 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Search" autocomplete="on" translate="Search">
                                     <lucide-angular name="search" [class]="'ml-2 inline-block size-4 absolute top-2.5 text-slate-500 fill-slate-100'"></lucide-angular>
                                 </div>
                                 <select
@@ -33,8 +33,8 @@
                             
                                 
                                 >
-                                    <option value="whatsappPhone">Telefono</option>
-                                    <option value="identificacion">Identificacion</option>
+                                    <option value="whatsappPhone">{{'Phone Number' | translate}}</option>
+                                    <option value="identificacion">{{'Identification' | translate}}</option>
                                 </select>
                             </div>
                              <!-- List Filters -->
@@ -43,7 +43,7 @@
                                     <!-- today button -->
                                     <button class=" border p-2 rounded-l rounded-r text-sm hover:bg-gray-100 hover:shadow-md mr-1"
                                         (click)="getTodaysUsers()"
-                                        >Today
+                                        >{{'Today' |translate}}
                                     </button>
 
                                     <!-- Select Page Size -->
@@ -62,7 +62,7 @@
                                     </div> 
 
                                     <button class="border p-2 rounded-l rounded-r absolute right-2 flex text-sm items-center justify-center overflow-hidden shadow-sm transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-blue-500 before:duration-500 before:ease-out hover:shadow-lg hover:before:h-56 hover:before:w-56 hover:text-white" (click)="openListFilter()">
-                                        <span  class="pr-3 z-10 hover:text-white">{{listFilterLabel}}</span>
+                                        <span  class="pr-3 z-10 hover:text-white">{{listFilterLabel | translate}}</span>
                                         <lucide-icon name="calendar-search" [size]="20" [strokeWidth]="1.5" class="z-10"></lucide-icon>
                                     </button>
                                 </div>
@@ -72,11 +72,11 @@
 
                                         <div class="flex items-center">
                                              <input [(ngModel)]="listSearchFilter" value="LastInteraction" id="radioDefault1" type="radio" name="colored-radio" class="size-3 border rounded-full text-purple-600 bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500">
-                                            <label for="radioDefault1" class="ms-2 text-sm text-gray-900 dark:text-gray-300">By Last Interaction</label>
+                                            <label for="radioDefault1" class="ms-2 text-sm text-gray-900 dark:text-gray-300">{{'By Last Interaction' | translate}}</label>
                                         </div>
                                         <div class="flex items-center">
                                             <input [(ngModel)]="listSearchFilter" value="ChatSessionStart" id="radioDefault2" type="radio"  name="colored-radio" class="size-3 border rounded-full text-purple-600 bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500">
-                                            <label for="radioDefault2" class="ms-2 text-sm text-gray-900 dark:text-gray-300">By Chat Session</label>
+                                            <label for="radioDefault2" class="ms-2 text-sm text-gray-900 dark:text-gray-300">{{'By Chat Session' | translate}}</label>
                                         </div>
 
                                     </div>
@@ -108,10 +108,10 @@
                                         </h6>
                                         <h6 *ngIf="!user.erpUser" class="mb-1">{{user.identificacion}}
                                         </h6>
-                                        <div class="flex">
+                                        <div class="flex gap-x-2">
                                             <div>
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{userKeys[0] | titlecase}}: </p>
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{erpUserKeys[0] | titlecase}}: </p>
+                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{userKeys[0] | translate }}: </p>
+                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{userKeys[2] | titlecase | translate }}: </p>
                                             </div>
                                             <div class="">
                                                 <p class="text-xs truncate text-slate-500 dark:text-zink-200 text-right">{{user.whatsappPhone}}</p>
@@ -130,10 +130,10 @@
                             }
                         }@else {
                             <div class="p-10 flex" style="justify-content: center">
-                                <span class="text-sm text-slate-400">No Users Found</span>
+                                <span class="text-sm text-slate-400">{{'users-not-found' | translate}}</span>
                             </div>
                         }
-                        </ul>
+                    </ul>
                     <div>
                     <!-- Pagination -->
                         <div class="px-5 py-5 pt-0 mt-2 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
@@ -189,12 +189,12 @@
                                         <span class="text-sm  bg-blue-500 rounded-full p-1 ml-5 text-white dark:text-zink-200" *ngFor="let rol of userInfo.erpUser?.rolesUsuario">{{rol.tipoRol ?? 'No Role'}} </span>                                        
                                     </h6>
                                     <h6 *ngIf="!userInfo.erpUser">{{userInfo.identificacion}}
-                                        <span class="text-sm  bg-blue-500 rounded-full p-1 ml-5 text-white dark:text-zink-200" >No Role </span>                                        
+                                        <span class="text-sm  bg-blue-500 rounded-full p-1 ml-5 text-white dark:text-zink-200" >{{'None' | translate}}</span>                                        
                                     </h6>
                                     <div class="flex absolute right-5">
                                         <button (click)="openChatFilter(userInfo.threadId!)"  
                                                 class="relative flex px-5 py-1 rounded-full items-center justify-center overflow-hidden shadow-sm transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-blue-500 before:duration-500 before:ease-out hover:shadow-lg hover:before:h-56 hover:before:w-56 hover:text-white" >
-                                            <span class="hover:text-white relative z-10 text-sm">{{chatFilterLabel}}</span>
+                                            <span class="hover:text-white relative z-10 text-sm">{{chatFilterLabel | translate}}</span>
                                             <span class="pl-3 z-10">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>
                                             </span>
@@ -213,7 +213,7 @@
                                 <!-- User Information -->
                                 <div class="flex gap-5 pt-5">
                                     <div>
-                                        <p *ngFor="let key of userKeys" class="text-sm text-slate-500 dark:text-zink-200">{{key | titlecase }}: </p>
+                                        <p *ngFor="let key of userKeys" class="text-sm text-slate-500 dark:text-zink-200">{{key | titlecase | translate}}: </p>
                                     </div>
                                     <div>
                                         <p class="text-sm text-slate-500 dark:text-zink-200">{{userInfo.whatsappPhone ?? 'N/A'}}</p>
@@ -232,7 +232,7 @@
                         @if (chatHistory.length > 0 && hasHistory) {
                             <div class="py-5 border-b border-blue-300 line mx-5">
                                 <div class="absolute flex right-1/2" id="recent">
-                                    <p class="text-blue-400">{{chatLabel}}</p>
+                                    <p class="text-blue-400">{{chatLabel | translate}}</p>
                                 </div>
                             </div>
                             @for (message of chatHistory; track $index){
@@ -246,7 +246,7 @@
                                         <div class=" group-[.right]/item grid gap-3 justify-end self-end">
                                             <div class="grid gap-0">
                                                 <div class=" p-3 text-slate-400 justify-self-end">
-                                                    {{message.role  | uppercase}}
+                                                    {{message.role | translate | uppercase}}
                                                 </div>
                                                 <div class="relative p-4 bg-white dark:bg-zink-700 rounded-b-md rounded-t-md max-w-sm shadow-sm 2xl:max-w-sm" id="message-content" style="box-shadow: 0 2px 3px 0 rgb(0 0 0 / 0.09);">
                                                     {{message.content}}
@@ -273,7 +273,7 @@
                                         <div class="grow group/item grid gap-3">
                                             <div class="grid gap-0">
                                                 <div class="relative p-3 text-blue-400">
-                                                    {{message.role  | uppercase}}
+                                                    {{message.role | translate | uppercase }}
                                                 </div>
                                                 <div class="relative p-4 bg-white dark:bg-zink-700 rounded-b-md rounded-t-md max-w-sm shadow-sm 2xl:max-w-sm font-14px" id="message-content">
                                                     {{message.content}}
@@ -289,7 +289,7 @@
                             } 
                         }@else if (chatHistory.length == 0 && !hasHistory) {
                             <div class=" absolute top-1/2 " style="justify-self: anchor-center">
-                                <span class="text-lg text-slate-400">No Chat History</span>
+                                <span class="text-lg text-slate-400">{{'No Chat History' | translate}}</span>
                             </div>
                         }
                         @else { <!-- Loading Spinner -->

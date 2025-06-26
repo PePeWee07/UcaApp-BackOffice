@@ -19,6 +19,7 @@ export interface Content {
     identificacion?:     string;
     chatSessions?:       ChatSession[];
     erpUser?:            ERPUser;
+    userTickets:         UserTicket[];
 }
 
 export interface ChatSession {
@@ -65,4 +66,10 @@ export interface Page {
     number?:        number;
     totalElements?: number;
     totalPages?:    number;
+}
+
+export interface UserTicket {
+    id:                number;
+    name:              string;
+    status:            string;
 }

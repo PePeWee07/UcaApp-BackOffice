@@ -14,15 +14,17 @@ import { PermissionList } from '../../models/UserProfile';
 import { SafeHtml, DomSanitizer } from '@angular/platform-browser';
 import { DashboardService } from '../../core/services/component/dashboard.service';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 
 @Component({
   selector: 'app-roles-permissions',
   standalone: true,
-  imports: [LucideAngularModule, NavModule, CommonModule, ReactiveFormsModule, FormsModule, MnDropdownComponent],
+  imports: [LucideAngularModule, NavModule, CommonModule, ReactiveFormsModule, FormsModule, MnDropdownComponent, TranslateModule],
   templateUrl: './roles-permissions.component.html',
   styleUrl: './roles-permissions.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
 })
 export class RolesPermissionsComponent {
   constructor(
@@ -33,7 +35,8 @@ export class RolesPermissionsComponent {
     private authService: AuthService,
     private sanitizer: DomSanitizer,
     @Inject(AlertToastService) private alertToastService: AlertToastService,
-  ){}
+    public translate: TranslateService
+  ){ translate.setDefaultLang('en'); }
 
   // parametros para la informacion del usuario
   id: number | undefined = undefined;
@@ -106,12 +109,12 @@ export class RolesPermissionsComponent {
           key != 'roles' &&
           key != 'authorities' 
         ).map(([key, value]) => ({
-          key,
-          value
+          key: key === 'phoneNumber' ? 'phone number' : key,
+          value: value
         }))
 
       },error: (err) => {
-        console.log('Error al obtener la lista de acciones: ', err);
+        console.log('Error al obtener informacion del usuario: ', err);
       },
     })
   }

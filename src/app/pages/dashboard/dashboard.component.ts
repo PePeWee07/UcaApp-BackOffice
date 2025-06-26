@@ -6,21 +6,24 @@ import { AuthService } from '../../core/services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { DashboardService } from '../../core/services/component/dashboard.service';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [LucideAngularModule, RouterLink, FormsModule, CommonModule],
+  imports: [LucideAngularModule, RouterLink, FormsModule, CommonModule, TranslateModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
 })
 export default class DashboardComponent{
   constructor(
     private authService: AuthService,
     private dashboardService: DashboardService,
     private sanitizer: DomSanitizer, 
-  ){};
+    public translate: TranslateService
+  ){translate.setDefaultLang('en'); };
 
   menuItems: { path: string; label: string; roles?: string[] }[] = [];
 

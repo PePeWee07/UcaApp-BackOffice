@@ -3,7 +3,7 @@
         class="bg-gradient-to-br from-gray-800 to-gray-900 fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0">
   <div class="relative border-b border-white/20">
     <a class="flex items-center gap-4 py-6 px-8" href="#/">
-      <h1 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white">Menu</h1>
+      <h1 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-white" >{{ 'menu' | translate }}</h1>
     </a>
     <button class="absolute right-0 top-0 w-8 h-8 text-white xl:hidden" (click)="toggleSidebar()">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
@@ -21,7 +21,7 @@
               <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path>
               <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path>
             </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">dashboard</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">{{'dashboards' | translate}}</p>
           </button>
         </a>
       </li>
@@ -32,7 +32,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-5 h-5 text-inherit">
               <path fill-rule="evenodd" d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 18.375V5.625zM21 9.375A.375.375 0 0020.625 9h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zm0 3.75a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zm0 3.75a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5a.375.375 0 00.375-.375v-1.5zM10.875 18.75a.375.375 0 00.375-.375v-1.5a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375h7.5zM3.375 15h7.5a.375.375 0 00.375-.375v-1.5a.375.375 0 00-.375-.375h-7.5a.375.375 0 00-.375.375v1.5c0 .207.168.375.375.375zm0-3.75h7.5a.375.375 0 00.375-.375v-1.5A.375.375 0 0010.875 9h-7.5A.375.375 0 003 9.375v1.5c0 .207.168.375.375.375z" clip-rule="evenodd"></path>
             </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">User List</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">{{'User List' | translate}}</p>
           </button>
         </a>
       </li>
@@ -43,7 +43,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-logs-icon lucide-logs">
               <path d="M13 12h8"/><path d="M13 18h8"/><path d="M13 6h8"/><path d="M3 12h1"/><path d="M3 18h1"/><path d="M3 6h1"/><path d="M8 12h1"/><path d="M8 18h1"/><path d="M8 6h1"/>
             </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Audit Logs</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">{{'Audit Logs' | translate }}</p>
           </button>
         </a>
       </li>
@@ -54,7 +54,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check-icon lucide-shield-check">
               <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
             </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Roles & Permissions</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">{{'Roles & Permissions' | translate}}</p>
           </button>
         </a>
       </li>
@@ -62,7 +62,7 @@
 
     <ul class="mb-4 flex flex-col gap-1" *ngIf="withRoles(['ROLE_ADMIN'])">
       <li class="mx-3.5 mt-4 mb-2">
-        <p class="block antialiased font-sans text-sm leading-normal text-white font-black uppercase opacity-75">Backoffice Virtual Assistant</p>
+        <p class="block antialiased font-sans text-sm leading-normal text-white font-black uppercase opacity-75">{{'backoffice' | translate}}</p>
       </li>
       <li >
         <a routerLink="/wa-user-tables" *ngIf="withRoles(['ROLE_ADMIN'])">
@@ -71,7 +71,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
               </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Chat User List</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">{{'Chat User List' | translate}}</p>
           </button>
         </a>
       </li>
@@ -82,7 +82,7 @@
            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
            </svg>
-            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">Chat History</p>
+            <p class="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">{{'Chat History' | translate}}</p>
           </button>
         </a> 
       </li>

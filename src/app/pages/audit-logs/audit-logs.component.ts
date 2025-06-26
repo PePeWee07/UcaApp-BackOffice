@@ -13,14 +13,16 @@ import { ActionLogService } from '../../core/services/actionLogs/actionLogs.serv
 import { FormsModule } from '@angular/forms';
 import { CountUpModule } from 'ngx-countup';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-audit-logs',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, NgxDatatableModule, FormsModule, CountUpModule],
+  imports: [CommonModule, LucideAngularModule, NgxDatatableModule, FormsModule, CountUpModule, TranslateModule],
   templateUrl: './audit-logs.component.html',
   styleUrl: './audit-logs.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, TranslateService]
 })
 export class AuditLogsComponent {
   constructor(
@@ -28,16 +30,26 @@ export class AuditLogsComponent {
     private authService: AuthService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer, 
-        @Inject(AlertToastService) private alertToast: AlertToastService
-  ) {}
+    @Inject(AlertToastService) private alertToast: AlertToastService,
+    public translate: TranslateService
+  ) { translate.setDefaultLang('en'); }
 
-  audits: Acciones = []
+  audits: Accion[] = []
   tableKeys: string[] = [];
-  tableCounts: { table: string; count: number; }[] = []
-  allAudits: Acciones = [];
+  tableCounts: { table_name: string; count: number; }[] = []
+  allAudits: Accion[] = [];
   allKeys: string[] = [];
 
-  filteredAudits: Acciones = [];
+  // paramteros para paginacion
+  page: number = 0;
+  pageSize: number = 30;
+  totalElements: number = 0;
+  pagesArray: number[] = [];
+  totalPages: number = 5;
+  numberOfElements: number = 0;
+
+  // Filtros de busqueda
+  filteredAudits: Accion[] = [];
   listStartDate?: string = '';
   listEndDate?: string = '';
   listFilterLabel: string = '';
@@ -55,19 +67,22 @@ export class AuditLogsComponent {
   rowData: ({ key: string; value: unknown; })[] = [];
   clientAddr: (ClientAddr | null | undefined)[] = [];
   changedFields: ({ key: string; value: unknown; })[] = [];
+  totalActions: number = 0;
 
   
   ngOnInit(): void {
     this.searchParam.pipe(debounceTime(300)).subscribe(() => {
       if(this.searchText != ''){
-        console.log('seatch text', this.searchText)
         this.globalSearch(this.searchText!);
       }else if(this.searchNum != undefined){
-        console.log('seatch num', this.searchNum)
         this.idSearch(this.searchNum!);
       }
     });
     this.getActions();
+  }
+
+  get url(): string {
+    return `page=${this.page}&pageSize=${this.pageSize}`;
   }
 
   // verificar si el usuario tiene el rol especificado
@@ -78,82 +93,24 @@ export class AuditLogsComponent {
   onSearch(event: KeyboardEvent){
     this.searchParam.next((event.target as HTMLInputElement).value); // Emitir el valor de búsqueda
   }
-
-  // filtrar los logs por fechas
-  findActionsByDate(startDate: Date, endDate: Date) {
-    this.actionLogService.getActions().subscribe({
-      next: (actions: Acciones) => {
-
-        // Parse and filter actions
-        this.filteredAudits = actions.filter((audit) => {
-          const timestamp = new Date(audit.action_tstamp_tx);
-          return timestamp >= startDate && timestamp <= endDate;
-        });
-        this.audits = this.filteredAudits.reverse()
-
-        console.log('Filtered audits:', this.filteredAudits);
-      },
-      error: (err) => {
-        console.error('Failed to fetch actions:', err);
-      }
-    });
-  }
-
-  // llamar al metodo cuando el usuario ponga una fecha
-  onListDateChange() {  
-    if(this.listStartDate!= ''  && this.listEndDate != '' ){
-
-      const startDateTime = new Date(`${this.listStartDate}T00:00:00`);
-      const endDateTime = new Date(`${this.listEndDate}T23:59:59`);
-
-      this.findActionsByDate(startDateTime, endDateTime);
-    } else{
-      this.getActions()
-    }
-
-  }
-
-  // Metodo para buscar en toda la tabla
-  globalSearch(text: string){
-    console.log('gloal search')
-     this.actionLogService.searchOnTables(text).subscribe({
-      next: (res: Acciones) => {
-        if(!res || res.length < 0){
-          this.audits = []
-          return;
-        }
-        this.audits = res;
-      },error: (err) => {
-        console.log('Error al obtener busqueda: ', err);
-      },
-    })
-  }
-  // Metodo para buscar auditoria por id
-  idSearch(id: number){
-    console.log('searching iwth', id)
-    this.findAudit(id)
-  }
-
-  // Metodoo para obtener los nombres de las tablas
-  getTableNames(){
-    this.actionLogService.getTableNames().subscribe({
-      next: (res: any[]) => {
-        this.tableNames = res.map(item => item.table_name).filter((key) =>
-          key != 'flyway_schema_history'
-        );
-      },error: (err) => {
-        console.log('Error al obtener las tablas: ', err);
-      },
-    })
-  }
+  
   // Obtener todos los logs de auditoria
   getActions(){
     this.listStartDate = undefined;
     this.listEndDate = undefined;
-    this.actionLogService.getActions().subscribe({
+    this.tableName = '';
+    this.actionLogService.getActions(this.url).subscribe({
       next: (res: Acciones) => { 
-        this.allAudits = res;
-        this.audits = this.allAudits.reverse()
+        this.allAudits = res.content;
+        this.audits = this.allAudits
+
+        this.page = res.pageable.pageNumber;
+        this.totalElements = res.totalElements;
+        this.totalActions = this.totalElements
+        this.totalPages = res.totalPages;
+        this.numberOfElements = res.numberOfElements;
+        this.generatePagesArray(this.page, this.totalPages);
+
         // Filtrar las llaves que se veran en la tabla
         this.tableKeys = Object.keys(this.allAudits[0]).filter((key: string) => 
           key != "action_tstamp_stm" &&
@@ -168,19 +125,7 @@ export class AuditLogsComponent {
           key === 'action_tstamp_tx' ? 'Timestamp' : key
         )
         this.getTableNames();
-
-        // Contar el numero de logs por tabla
-        const counts: { [key: string]: number } = {};
-        for (const audit of this.allAudits) {
-          const table = audit.table_name;
-          counts[table] = (counts[table] || 0) + 1;
-        }
-        // Contar el numero de logs por tabla
-        this.tableCounts = Object.entries(counts).map(([table, count]) => ({
-          table,
-          count
-        }));
-
+        this.countActions();
 
       },error: (err) => {
         console.log('Error al obtener la lista de acciones: ', err);
@@ -188,7 +133,260 @@ export class AuditLogsComponent {
     })
   }
 
-  // HTML dynamico para obtener un icon en base al nombre de tabla
+  countActions(){
+    this.actionLogService.countActions().subscribe({
+      next: (res) => {
+        this.tableCounts = res;
+      }
+    })
+  }
+
+  // filtrar los logs por fechas
+  findActionsByDate(startDate: string, endDate: string) {
+    const startDateTime = `${this.listStartDate}T00:00:00`;
+    const endDateTime = `${this.listEndDate}T23:59:59`;
+    this.actionLogService.getActionsByDate(startDateTime, endDateTime, this.url).subscribe({
+      next: (actions: Acciones) => {
+
+        this.filteredAudits = actions.content
+        this.audits = this.filteredAudits
+        this.page = actions.pageable.pageNumber;
+        this.totalElements = actions.totalElements;
+        this.totalPages = actions.totalPages;
+        this.numberOfElements = actions.numberOfElements;
+        this.generatePagesArray(this.page, this.totalPages);
+        
+      },
+      error: (err) => {
+        console.error('Failed to fetch actions:', err);
+      }
+    });
+  }
+
+  // llamar al metodo cuando el usuario ponga una fecha
+  onListDateChange() {  
+    if(this.listStartDate  && this.listEndDate ){
+      console.log('list start date: ', this.listStartDate, 'list end date: ', this.listEndDate);
+      this.findActionsByDate(this.listStartDate, this.listEndDate);
+    } else if(this.listStartDate){
+      this.listStartDate;
+    }else{
+      this.getActions()
+    }
+
+  }
+
+  // Metodo para buscar en toda la tabla
+  globalSearch(text: string){
+      this.actionLogService.searchOnTables(text, this.url).subscribe({
+        next: (res: Acciones) => {
+          if(!res || res.content.length < 0){
+            console.log('none found url')
+            this.audits = []
+            return;
+          }
+          this.audits = res.content;
+          console.log(this.audits)
+          this.page = res.pageable.pageNumber;
+          this.totalElements = res.totalElements;
+          this.totalPages = res.totalPages;
+          this.numberOfElements = res.numberOfElements;
+          this.generatePagesArray(this.page, this.totalPages);
+        },error: (err) => {
+          console.log('Error al obtener busqueda: ', err);
+        },
+      })
+  
+  }
+  // Metodo para buscar auditoria por id
+  idSearch(id: number){
+    if(id == null){
+      this.getActions()
+    }else{
+      this.findAudit(id)
+    }
+  }
+
+  // Metodoo para obtener los nombres de las tablas
+  getTableNames(){
+    this.actionLogService.getTableNames().subscribe({
+      next: (res: any[]) => {
+        this.tableNames = res.map(item => item.table_name).filter((key) =>
+          key != 'flyway_schema_history'
+        );
+      },error: (err) => {
+        console.log('Error al obtener las tablas: ', err);
+      },
+    })
+  }
+
+  // Metodo para abrir los detalles de log
+  openDetails(id: number){
+    this.selectAudit = this.selectAudit === id ? -1 : id;
+    this.getAuditDetails(id)
+  } 
+
+  // Metodo para obetner los detalles de log
+  getAuditDetails(id: number){
+    this.actionLogService.findAction(id).subscribe({
+      next: (log: Accion) => {
+        this.auditDetails = log;
+        this.allKeys = Object.keys(log)
+        // Obtener los datos dentro del objeto row_Data
+        this.rowData = Object.entries(this.auditDetails.row_data ?? {}).map(([key, value]) => ({
+          key,
+          value
+        }));
+        // Obetener los datos dentro del objeto changedFields
+        this.changedFields = Object.entries(this.auditDetails.changed_fields ?? {}).map(([key, value]) => ({
+          key,
+          value
+        }));
+      },error: (err) => {
+        console.log('Error al obtener auditoria: ', err);
+      },
+    })
+  }
+
+  // Metodo para obtener un log por id
+  findAudit(id: number){
+    this.actionLogService.findAction(id).subscribe({
+      next: (log: Accion) => {
+        if(!log){
+          this.audits =[]
+          return;
+        }
+        this.audits = [];
+        this.audits.push(log)
+        this.auditDetails = log;
+        
+        this.page = 0;
+        this.totalElements = 1;
+        this.totalPages = 1;
+        this.numberOfElements = 1;
+        this.generatePagesArray(this.page, this.totalPages);
+
+
+      },error: (err) => {
+        console.log('Error al encontrar la auditoria con: ', id, err);
+      },
+    })
+  }
+
+  // // Metodo para obtener los logs por su nimbre de tabla
+  getTable(tableName: string){
+    this.actionLogService.getTable(tableName, this.url).subscribe({
+      next: (table: Acciones) => {
+        if(!table || table.content.length < 0){
+          this.audits = []
+          return;
+        }
+        this.audits = table.content
+         this.page = table.pageable.pageNumber;
+        this.totalElements = table.totalElements;
+        this.totalPages = table.totalPages;
+        this.numberOfElements = table.numberOfElements;
+        this.generatePagesArray(this.page, this.totalPages);
+      },error: (err) => {
+        console.log('Error al obtener la tabla de auditorias: ', err);
+      },
+    })
+  }
+
+  // Métodos para manejar los cambios en las opciones seleccionadas
+  onPageSizeChange(value: string) {
+    this.pageSize = parseInt(value, 10);
+    if(this.listStartDate && this.listEndDate){
+      this.findActionsByDate(this.listStartDate, this.listEndDate);
+    }else if(this.tableName){
+      this.getTable(this.tableName)
+    }else if(this.searchText){
+        this.globalSearch(this.searchText)
+    }else{
+      this.getActions();
+    }
+  }
+
+
+  previousPage() {
+    if (this.page > 0) {
+      this.page--;
+      if(this.listStartDate && this.listEndDate){
+        this.findActionsByDate(this.listStartDate, this.listEndDate);
+      }else if(this.tableName){
+        this.getTable(this.tableName)
+      }
+      else if(this.searchText){
+        this.globalSearch(this.searchText)
+      }else{
+        this.getActions();
+      }
+    }
+  }
+
+  nextPage() {
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      if(this.listStartDate && this.listEndDate){
+        this.findActionsByDate(this.listStartDate, this.listEndDate);
+      }else if(this.tableName){
+        this.getTable(this.tableName)
+      }else if(this.searchText){
+        console.log(this.searchText)
+        this.globalSearch(this.searchText)
+      }else{
+        this.getActions();
+      }
+    }
+  }
+
+  goToPage(page: number) {
+    this.page = page;
+    if(this.listStartDate && this.listEndDate){
+      this.findActionsByDate(this.listStartDate, this.listEndDate);
+    }else if(this.tableName){
+      this.getTable(this.tableName)
+    }else if(this.searchText){
+      console.log(this.searchText)
+      console.log(this.page)
+        this.globalSearch(this.searchText)
+    }else{
+      this.getActions();
+    }
+  }
+
+  
+  // Método para generar el array de páginas para la paginación
+  generatePagesArray(currentPage: number, totalPages: number): void {
+    const pages: number [] = [];
+
+    if (totalPages <= 15) {
+      // Show all pages
+      for (let i = 0; i < totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 5) {
+          for (let i = 0; i < 10; i++) pages.push(i);
+          pages.push(-1);
+          pages.push(totalPages - 1);
+      } else if (currentPage >= totalPages - 6) {
+          pages.push(0);
+          pages.push(-1);
+          for (let i = totalPages - 7; i < totalPages; i++) pages.push(i);
+      } else {
+          pages.push(0);
+          pages.push(-1);
+          for (let i = currentPage - 2; i <= currentPage + 4; i++) pages.push(i);
+          pages.push(-1);
+          pages.push(totalPages - 1);
+      }
+    }
+
+    this.pagesArray = pages;
+  }
+
+    // HTML dynamico para obtener un icon en base al nombre de tabla
   getTableIcon(tableName: string): SafeHtml{
     let svg = ``
     switch(tableName){
@@ -280,66 +478,9 @@ export class AuditLogsComponent {
     }
   }
 
-  // Metodo para abrir los detalles de log
-  openDetails(id: number){
-    this.selectAudit = this.selectAudit === id ? -1 : id;
-    this.getAuditDetails(id)
-  } 
-
-  // Metodo para obetner los detalles de log
-  getAuditDetails(id: number){
-    this.actionLogService.findAction(id).subscribe({
-      next: (log: Accion) => {
-        this.auditDetails = log;
-        this.allKeys = Object.keys(log)
-        // Obtener los datos dentro del objeto row_Data
-        this.rowData = Object.entries(this.auditDetails.row_data ?? {}).map(([key, value]) => ({
-          key,
-          value
-        }));
-        // Obetener los datos dentro del objeto changedFields
-        this.changedFields = Object.entries(this.auditDetails.changed_fields ?? {}).map(([key, value]) => ({
-          key,
-          value
-        }));
-      },error: (err) => {
-        console.log('Error al obtener auditoria: ', err);
-      },
-    })
+  openTable(table: string){
+    this.tableName = table
+    this.getTable(this.tableName)
   }
-
-  // Metodo para obtener un log por id
-  findAudit(id: number){
-    this.actionLogService.findAction(id).subscribe({
-      next: (log: Accion) => {
-        this.audits = [];
-        this.audits.push(log)
-        this.auditDetails = log;
-        console.log('found: ', this.audits)
-      },error: (err) => {
-        console.log('Error al encontrar la auditoria con: ', id, err);
-      },
-    })
-  }
-
-  // Metodo para obtener los logs por su nimbre de tabla
-  getTable(tableName: string){
-    this.actionLogService.getTable(tableName).subscribe({
-      next: (table: Acciones) => {
-        if(!table || table.length < 0){
-          this.audits = []
-          return;
-        }
-        this.audits = table
-      },error: (err) => {
-        console.log('Error al obtener la tabla de auditorias: ', err);
-      },
-    })
-  }
-
-  onDirectionChange(direction: string){
-    this.audits = this.audits.reverse()
-  }
-
 }
 

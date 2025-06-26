@@ -10,15 +10,17 @@ import { NavModule } from '../../component/tab/tab.module';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [LucideAngularModule, NavModule, CommonModule, ReactiveFormsModule],
+  imports: [LucideAngularModule, NavModule, CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
 })
 export class ProfileComponent {
   constructor(
@@ -27,10 +29,11 @@ export class ProfileComponent {
       private sanitizer: DomSanitizer, 
       private formBuilder: FormBuilder,
           @Inject(AlertToastService) private alertToast: AlertToastService
-  ) {}
+      , public translate: TranslateService
+  ) { translate.setDefaultLang('en'); }
 
   profileInfo: any | null = null;
-  permissions: PermissionList[] | null | undefined = null;
+  permissions: PermissionList[] = [];
   profileKeys: string[] = [];
 
   // parametros para actualizar la informacion del usuario
@@ -61,7 +64,13 @@ export class ProfileComponent {
         this.profileInfo = profile;
 
         this.profileInfo.roles?.forEach((role: any) => 
-          this.permissions = role.permissionList
+          {if(role.permissionList){
+            this.permissions.push(role.permissionList)
+            this.permissions = this.permissions?.flatMap((permission: PermissionList) => permission);
+          }else{
+            this.permissions = []
+          }
+          }
         )
 
         this.profileKeys = Object.keys(this.profileInfo).map((key) =>

@@ -181,12 +181,11 @@ export class AuditLogsComponent {
       this.actionLogService.searchOnTables(text, this.url).subscribe({
         next: (res: Acciones) => {
           if(!res || res.content.length < 0){
-            console.log('none found url')
+            console.log('none found url') //! debug
             this.audits = []
             return;
           }
           this.audits = res.content;
-          console.log(this.audits)
           this.page = res.pageable.pageNumber;
           this.totalElements = res.totalElements;
           this.totalPages = res.totalPages;

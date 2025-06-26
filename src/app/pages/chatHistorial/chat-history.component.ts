@@ -5,7 +5,7 @@ import { AlertToastService } from '../../core/services/component/alert-toast.ser
 import { CommonModule } from '@angular/common';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, Trash, icons } from 'lucide-angular';
 import { ChatHistoryService } from '../../core/services/virtualAssistant/chatHistory.service';
-import { ChatAssistenteVirtual, History } from '../../models/chatAssistenteVirtual';
+import { ChatAssistenteVirtual, History } from '../../models/models_assistantVirtual/chatAssistenteVirtual';
 import { WhatsAppUser,ERPUser, RolesUsuario } from '../../models/models_assistantVirtual/WhatsAppUser';
 import { UserListService } from '../../core/services/virtualAssistant/userlist.service';
 import { WhatsAppUserList, Content } from '../../models/models_assistantVirtual/WhatsAppUserList';

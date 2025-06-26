@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WhatsAppUser } from '../../../models/models_assistantVirtual/WhatsAppUser';
-import { ChatAssistenteVirtual } from '../../../models/chatAssistenteVirtual';
+import { ChatAssistenteVirtual } from '../../../models/models_assistantVirtual/chatAssistenteVirtual';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({

@@ -11,7 +11,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class RolesPermissionsService{
 
-  private Url: String = environment.apiUrls.ucacue;
+  private Url: String = environment.apiUrls.ucacue ?? "";
 
   constructor(private http: HttpClient) { }
 

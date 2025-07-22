@@ -59,7 +59,6 @@ export class WhatsAppUserTablesComponent implements OnInit {
   selectedField: string = 'whatsappPhone';
   searchSubject: Subject<string> = new Subject<string>();
   totalElements: number = 0;
-  pagesArray: number[] = [];
   userNotFound: boolean = false;
 
   // Parametros para los chat sessions
@@ -68,10 +67,10 @@ export class WhatsAppUserTablesComponent implements OnInit {
   sessionEnd: Date = new Date();
   openSessions: number | null = null;
 
-  
+
   ngOnInit(): void {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
-      this.searchUser(this.selectedField);   
+      this.searchUser(this.selectedField);
     });
 
     this.getWhatsAppUsers();
@@ -81,16 +80,16 @@ export class WhatsAppUserTablesComponent implements OnInit {
   withPermissions(permissions: string[]): boolean{
     return this.authService.includesPermission(permissions);
   }
-  
+
   // Obtener la URL de la petición
   get url(): string {
     return `${this.page}?pageSize=${this.pageSize}&sortBy=${this.sortBy}&direction=${this.direction}`;
   }
- 
+
   // Metodo para buscar en la tabla
   onSearch(event: KeyboardEvent) {
     this.searchText = (event.target as HTMLInputElement).value.trim()
-    
+
     if (this.searchText) {
       this.WhatsAppUserListService.getUserInfo(this.selectedField, this.searchText);
     } else {
@@ -98,7 +97,7 @@ export class WhatsAppUserTablesComponent implements OnInit {
     }
   }
 
-  // Metodo para buscar a un usuario 
+  //! Metodo para buscar a un usuario
   searchUser(field: string): void {
   this.WhatsAppUserListService.getUserInfo(field, this.searchText).subscribe({
     next: (res) => {
@@ -112,7 +111,6 @@ export class WhatsAppUserTablesComponent implements OnInit {
       this.userList = [res];
       this.totalPages = 1;
       this.page;
-      this.pagesArray = [0];
 
     },
     error: (err) => {
@@ -124,7 +122,7 @@ export class WhatsAppUserTablesComponent implements OnInit {
     });
   }
 
-  // Obtener los usuarios
+  //! Obtener los usuarios
   getWhatsAppUsers(){
     this.WhatsAppUserListService.getWhatsAppUsers(this.url).subscribe({
       next: (res: WhatsAppUserList) => {
@@ -132,18 +130,18 @@ export class WhatsAppUserTablesComponent implements OnInit {
         this.page = res.page?.number ?? 0;
         this.totalElements = res.page?.totalElements ?? 0;
         this.totalPages = res.page?.totalPages ?? 0;
-        this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i); // Array de paginas
         console.log(this.userList)
 
-        const allowedKeys = [ 
-          'id', 
-          'nombres','apellidos',
+        const allowedKeys = [
+          'id',
+          'nombres',
+          'apellidos',
           'identificacion',
-          'whatsappPhone', 
+          'whatsappPhone',
           'conversationState',
-          'block', 
-          'blockingReason', 
-          'emailInstitucional',
+          'block',
+          'blockingReason',
+          'emailInstitucional'
         ];
 
         const firstValidErpUser = this.userList.find(u => u.erpUser)?.erpUser;
@@ -170,9 +168,9 @@ export class WhatsAppUserTablesComponent implements OnInit {
         .filter((key: string) =>
             key !== 'chatSessions' && key !== 'erpUser'
         ) as (keyof Content)[];
-    
-        // Obtener los keys que se veran en la tabla  
-        this.tableKeys = [...this.userKeys, ...this.erpUserKeys]        
+
+        // Obtener los keys que se veran en la tabla
+        this.tableKeys = [...this.userKeys, ...this.erpUserKeys]
         this.tableKeys = allowedKeys.filter((key) =>
           this.tableKeys.includes(key))
         .map((key: string) =>
@@ -253,7 +251,7 @@ export class WhatsAppUserTablesComponent implements OnInit {
       this.getWhatsAppUsers();
   }
 
-  //Metodo para ir a la pagina anterior 
+  //Metodo para ir a la pagina anterior
   previousPage() {
     if (this.page > 0) {
       this.page--;
@@ -278,7 +276,7 @@ export class WhatsAppUserTablesComponent implements OnInit {
   // Metodo para bloquear o desbloquear a un usuario
   changeUserStatus(userId: any){
     const isBlocked = !userId.block;
-    let limitStrike = userId.limitStrike; 
+    let limitStrike = userId.limitStrike;
     let blockingReason = userId.blockingReason;
 
     if(isBlocked == false){
@@ -312,14 +310,14 @@ export class WhatsAppUserTablesComponent implements OnInit {
     let badge = ``;
     switch(state){
       case 'READY':
-        badge= `<div 
+        badge= `<div
                       class="flex items-center px-2.5 py-1 text-xs font-medium rounded-l rounded-r bg-green-100 border-transparent text-green-500 dark:bg-custom-500/20 dark:border-transparent">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-icon lucide-circle-check mr-2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                       ${ state }
                 </div>`
         break;
       case 'ASKED_FOR_CEDULA':
-      badge = `<div  
+      badge = `<div
                   class="flex items-center px-2.5 py-1 text-xs font-medium rounded-l rounded-r  bg-orange-100 border-transparent text-orange-500 dark:bg-custom-500/20 dark:border-transparent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 lucide lucide-loader-icon lucide-loader"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
                       ${ state }

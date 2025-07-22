@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class UserAdminService {
 
-  private Url: String = environment.apiUrls.ucacue;
+  private Url: String = environment.apiUrls.ucacue ?? "";
 
   constructor(private http: HttpClient) { }
 

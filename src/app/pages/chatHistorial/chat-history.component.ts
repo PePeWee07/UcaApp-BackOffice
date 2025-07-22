@@ -1,489 +1,430 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { SimplebarAngularModule } from 'simplebar-angular';
+import {
+  WhatsAppUserList,
+  Content,
+  RolesUsuario,
+} from '../../models/models_assistantVirtual/WhatsAppUserList';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
-import { CommonModule } from '@angular/common';
-import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, Trash, icons } from 'lucide-angular';
-import { ChatHistoryService } from '../../core/services/virtualAssistant/chatHistory.service';
-import { ChatAssistenteVirtual, History } from '../../models/models_assistantVirtual/chatAssistenteVirtual';
-import { WhatsAppUser,ERPUser, RolesUsuario } from '../../models/models_assistantVirtual/WhatsAppUser';
-import { UserListService } from '../../core/services/virtualAssistant/userlist.service';
-import { WhatsAppUserList, Content } from '../../models/models_assistantVirtual/WhatsAppUserList';
-import { ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { MDModalModule } from '../../component/modals';
+import { DrawerModule } from '../../component/drawer';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { UserListService } from '../../core/services/virtualAssistant/userlist.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
+import { Component, ViewChild, Inject, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SimplebarAngularModule } from 'simplebar-angular';
+import { NavModule } from '../../component/tab/tab.module';
+import {
+  LUCIDE_ICONS,
+  LucideAngularModule,
+  LucideIconProvider,
+  icons,
+} from 'lucide-angular';
+import { MnDropdownComponent } from '../../component/dropdown/dropdown.component';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { fromEvent, Subject } from 'rxjs';
+import { auditTime, debounceTime, distinctUntilChanged, filter, takeUntil } from 'rxjs/operators';
+import { FlatpickrModule } from '../../component/flatpickr/flatpickr.module';;
 
+import { contact } from '../../data/chat'; //! Data of expample
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, SimplebarAngularModule, LucideAngularModule, FormsModule, TranslateModule],
+  imports: [
+    CommonModule,
+    SimplebarAngularModule,
+    NavModule,
+    LucideAngularModule,
+    DrawerModule,
+    MDModalModule,
+    MnDropdownComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    FlatpickrModule,
+    TranslateModule
+  ],
   templateUrl: './chat-history.component.html',
   styleUrl: './chat-history.component.scss',
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}, LanguageService]
+  providers: [
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider(icons),
+    },
+    LanguageService,
+  ],
 })
-export class ChatHistoryComponent{
+export class ChatHistoryComponent {
   constructor(
-    private chatHistoryService: ChatHistoryService,
     private userListService: UserListService,
-    private route: ActivatedRoute,
     private authService: AuthService,
-    private sanitizer: DomSanitizer, 
-    @Inject(AlertToastService) private alertToast: AlertToastService,
-    public translate: TranslateService
-    ) { translate.setDefaultLang('en'); }
+    public translate: TranslateService,
+    public formBuilder: UntypedFormBuilder,
+    @Inject(AlertToastService) private alertToast: AlertToastService
+  ) {
+    translate.setDefaultLang('en');
+  }
 
-    // parametros para obtener la lista de usuarios
-    filteredUsers: Content[] = [];
-    isSelected: string = '';
-    page: number = 0;
-    pageSize: number = 5;
-    totalPages: number = 1;
-    totalElements: number = 0;
-    pagesArray: number[] = [];
-    searchText: string = '';
-    searchFilter: string = 'whatsappPhone'
+  contacts: any; //! Variable por eliminar
 
-    // parametros para obtener la informacion del usuario
-    userInfo: WhatsAppUser | null = null;
-    userKeys: string[] = [];
-    identificacion:  string = '';
-    threadId: string = '';
-    erpUserInfo: any | null = null;
-    erpUsers: any[] = [];
-    erpUserKeys: string[] = [];
+  messageSave() {
+    // TODO: Implementar la lógica para enviar un mensaje al usuario
+  }
 
-    // parametros para filtrar los usuarios
-    today: any = new Date();
-    startDate: string = '';
-    endDate: string = '';
-    listStartDate?: string = '';
-    listEndDate?:string = '';
-    listFilter: boolean = false;
-    listFilterLabel: string = 'Filter';
-    listSearchFilter: string = 'LastInteraction'
+  ngOnInit(): void {
+    // Dejar de escribir 2s, dispara executeSearch()
+    this.searchText$
+    .pipe(
+      debounceTime(2000),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => this.executeSearch());
+    this.contacts = contact;
+  }
 
-    // parametros para obtener la informacion del chat
-    chatHistory: History [] = [];
-    keysChat: string[] = [];
-    chatLabel: string = 'All Chat Messages';
-    chatType: number = 2; // 0 = Today, 1 = Session, 2 = Filtered, default/3 = All
-    hasHistory: boolean = true;
+  // Var Paginacion de Usuarios recientes
+  users: Content[] = [];
+  private userPage = 0;
+  private userTotalPages = 1;
+  isLoadingUsers = false;
+  @ViewChild('scrollRef', { static: false, read: ElementRef })
+  scrollRef!: ElementRef<HTMLElement>;
 
-    // parametros para filtrar el chat
-    chatFilterLabel: string = 'Filter Messages';
-    chatStartDate?: string = '';
-    chatEndDate?: string = '';
-    chatFilter: boolean = false;
+  // Var Historial
+  private destroy$ = new Subject<void>();
+  chatuser: any;
+  isLoadingHistory = false;
+  private historyPage = 0;
+  private historyTotalPages = 1;
+  @ViewChild('messageScrollRef', { static: false }) messageScrollRef!: any;
 
-    ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      // Obtener los parametros de la ruta
-      this.identificacion = params['identificacion'];  
-      let phone = params['phoneNumber']; 
-      this.startDate = params['startDate'];
-      this.endDate = params['endDate'];
+  // Var de un usario
+  user: Content = {};
+  role: string = '';
+  profile: string = '../../../assets/images/users/user-dummy-img.jpg';
 
-      if(this.identificacion == 'Anonymus' || this.identificacion == 'null'){
-        this.hasHistory = false;
-        this.getUserInfo('whatsappPhone', phone)
-      }else if(this.identificacion != undefined){
-        this.searchText = this.identificacion;
-        this.searchFilter = 'identificacion'
-        this.searchUser('identificacion')
+  // Var buscar usaurio
+  searchField : 'identificacion' | 'whatsappPhone' = 'identificacion';
+  searching: boolean = false;
+  searchText: string = "";
+  private searchText$ = new Subject<string>();
+  noUsersFound = false;
 
-        if(this.startDate && this.endDate){
-          this.chatType = 1;
-          this.getUserInfo('identificacion', this.identificacion, this.startDate, this.endDate);
-        }else{
-          this.getUserInfo('identificacion', this.identificacion)
-        }
-      }else{
-        this.getTodaysUsers();
-      }
+  // Var Ocultables
+  showTab: boolean = true;
+  showSearchChat: boolean = false;
 
-    });
-    }
 
-    // verificar si el usuario tiene el rol especificado
-    withPermissions(permissions: string[]): boolean{
-      return this.authService.includesPermission(permissions);
-    }
+  //! NEW
 
-    // Metodo para obtener la fecha de hoy
-    getToday(): string {
-      return this.today.toISOString().split('T')[0]
-    }
-  
-    // Obtener la URL de la petición
-    get url(): string {
-      return `${this.page}/by${this.listSearchFilter}?startDate=${this.startDate}&endDate=${this.endDate}&pageSize=${this.pageSize}`;
-    }
 
-    // Metodo para buscar en la lista 
-    onSearch(event: KeyboardEvent) {
-      this.searchText = (event.target as HTMLInputElement).value.trim();
-      
-      if (this.searchText) {
-        this.chatHistoryService.getUserInfo(this.searchFilter, this.searchText);
-      } else {
-        this.getTodaysUsers();
-      }
-    }
 
-    // Metodo para encontrar la informacion de un usuario
-    searchUser(field: string): void {
-    this.chatHistoryService.getUserInfo(field, this.searchText).subscribe({
-      next: (res) => {
-        if (!res) {
-          this.filteredUsers = [];
-          this.userKeys = ['None'];
-          return;
-        }
 
-        this.filteredUsers = [res];
-        this.page;
-        this.totalPages = 1;
-        this.pagesArray = [0];
-        this.totalElements = this.filteredUsers.length;
-        this.filteredUsers.forEach(user =>
-          this.erpUsers?.push(user.erpUser)
-        )
 
-        // Obtener los keys del usuario
-        const allowedKeys = ['whatsappPhone', 'identificacion', 'threadId'];
-        this.userKeys = Object.keys(this.filteredUsers[0])
-        .filter((key: string) =>
-          allowedKeys.includes(key)
-        ).map((key: string) => 
-          key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
-        )
-        
-        this.erpUserKeys = Object.keys(this.erpUsers[0])
-        .filter((key: string) =>
-          allowedKeys.includes(key)
-        )
-      },
-      error: (err) => {
-        console.error('Error al buscar el usuario:', err);
-        this.alertToast.showToast('error', err.error.errors[0].error, 3000);
-        this.filteredUsers = [];
-        this.userKeys = ['None'];
-      }
-    });
-    }
+  // Scroll al final del historial
+  private scrollToBottom() {
+    const scrollEl = this.messageScrollRef.SimpleBar.getScrollElement();
+    scrollEl.scrollTop = scrollEl.scrollHeight;
+  }
 
-    // Metodo para obtener a los usuarios dentro de un rango de fechas
-    getDatedUsers(startDate: Date, endDate: Date){
-    this.startDate = startDate.toISOString()
-    this.endDate = endDate.toISOString()
-    this.chatFilterLabel = 'Filter Messages';
+  // CAragr Historial
+  private loadHistory() {
+    if (this.isLoadingHistory || this.historyPage >= this.historyTotalPages)
+      return;
+    this.isLoadingHistory = true;
 
-    this.userListService.getDatedUsers(this.url).subscribe({
-      next: (users: WhatsAppUserList) => {
-        if(!users || users.content?.length == 0){
-          this.filteredUsers = [];
-          return; 
-        }
-        this.filteredUsers = users.content ?? [];
-        this.page = users.page?.number ?? 0;
-        this.pageSize = users.page?.size  ?? 5;
-        this.totalPages = users.page?.totalPages ?? 0;
-        this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
-        console.log('Filtered Users: ', this.filteredUsers)
+    const scrollEl = this.messageScrollRef.SimpleBar.getScrollElement();
+    const prevScrollHeight = scrollEl.scrollHeight;
 
-        // Obtener la informacion dentro del objeto erpUser
-        this.filteredUsers.forEach(user =>
-          this.erpUsers.push(user.erpUser)
-        )
-        // Obtener los keys que se veran en lista de usuarios
-        const allowedKeys = ['whatsappPhone', 'identificacion', 'threadId']
-        this.userKeys = Object.keys(this.filteredUsers[0]).filter((key: string) =>
-          allowedKeys.includes(key))
-          .map((key: string) => 
-            key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
-        )
+    this.userListService
+      .getHistoryUser(this.user.whatsappPhone!, this.historyPage, 50)
+      .subscribe({
+        next: (res) => {
+          this.historyTotalPages = res.page.totalPages;
 
-        if (this.chatType != 1) {
-          this.chatType = 3;
-        }
-      },
-      error: (err) => {
-        console.log('Error al obtener la lista de usuarios: ', err)
-      }
-    })
-    }
+          const pageContents = [...res.content].reverse();
+          const aiAvatar = '../../../assets/images/users/catia.jpeg';
+          const msgs = pageContents.flatMap(c => [
+            {
+              chatMsg:     c.userMessage,
+              isSender:    true,
+              avatar:      this.profile,
+              attachments: []
+            },
+            {
+              inputTokens:        c.inputTokens,
+              outputTokens:       c.outputTokens,
+              totalTokens:        c.totalTokens,
+              metadata:           c.metadata,
+              model:              c.model,
+              promptId:           c.promptId,
+              promptVariables:    c.promptVariables,
+              promptVersion:      c.promptVersion,
+              responseId:         c.responseId,
+              previousResponseId: c.previousResponseId,
+              createdAt:          c.createdAt,
+              reasoning:          c.reasoning,
+              toolCalls:          c.toolCalls,
+              chatMsg:            c.assistantMessage,
+              isSender:           false,
+              avatar:             aiAvatar,
+              attachments:        [],
+              showTools:          false
+            }
+          ]);
 
-    // Metodo para obtener los usuarios que tuvieron una conversacion hoy
-    getTodaysUsers() {
-      // obtener la fecha de hoy
-      this.startDate = this.today.toISOString().split('T')[0] + 'T00:00:00';
-      this.endDate = this.today.toISOString().split('T')[0] + 'T23:59:59';
-      this.listStartDate = '';
-      this.listEndDate = '';
-      this.listFilterLabel = 'Filter';
-      this.chatType = 0;
-      this.searchText = '';
 
-      this.userListService.getWhatsAppUsers(this.url).subscribe({
-        next: (users: WhatsAppUserList) => {
-          if (!users || users.content?.length == 0) {
-            this.filteredUsers = [];
-            this.page = 0;
-            this.pagesArray = [0] ;
-            return;
+          if (this.historyPage === 0) {
+            this.chatuser = [...msgs];
+            setTimeout(() => this.scrollToBottom(), 0);
+          } else {
+            this.chatuser = [...msgs, ...this.chatuser];
+            setTimeout(() => {
+              const newScrollHeight = scrollEl.scrollHeight;
+              scrollEl.scrollTop = newScrollHeight - prevScrollHeight;
+            }, 0);
           }
 
-          this.filteredUsers = users.content ?? [];
-          this.page = users.page?.number ?? 0;
-          this.totalPages = users.page?.totalPages ?? 0;
-          this.pagesArray = Array.from({ length: this.totalPages }, (_, i) => i);
-
-          // Obtener la informacion del objeto erpUser
-          this.filteredUsers.forEach(user =>
-            this.erpUsers.push(user.erpUser)
-          )
-
-          // Obtener los keys que se veran 
-          const allowedKeys = [ 'whatsappPhone', 'identificacion', 'threadId']
-          this.userKeys = Object.keys(this.filteredUsers[0]).filter((key) =>
-            allowedKeys.includes(key))
-            .map((key: string) => 
-              key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
-          ) as (keyof Content)[];
-
-          this.erpUserKeys = Object.keys(this.erpUsers[0]).filter((key: string)=>
-            allowedKeys.includes(key)
-          ) as (keyof ERPUser)[];
-
+          this.isLoadingHistory = false;
         },
-        error: (err) => {
-          console.log('Error al obtener los usuarios de hoy: ', err)
+        error: () => {
+          this.isLoadingHistory = false;
+          this.alertToast.showToast(
+            'error',
+            'Failed to load user history',
+            3000
+          );
+        },
+      });
+  }
+
+  // Scroll infinito del historial
+  private attachHistoryScroll() {
+    const scrollEl = this.messageScrollRef.SimpleBar.getScrollElement();
+
+    fromEvent(scrollEl, 'scroll')
+      .pipe(
+        auditTime(200), // throttle a 200 ms
+        filter(
+          () =>
+            scrollEl.scrollTop === 0 &&
+            this.historyPage < this.historyTotalPages - 1 &&
+            !this.isLoadingHistory
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.historyPage++;
+        this.loadHistory();
+      });
+  }
+
+  // OnClick User Chat show
+  chatUsername(user: Content, role:any) {
+    this.user = user;
+    this.role = role;
+    // Resetear historial
+    this.chatuser = [];
+    this.historyPage = 0;
+    this.historyTotalPages = 1;
+
+    // Cargar la primera página
+    this.loadHistory();
+
+    // Una vez renderizado, enganchar el scroll
+    setTimeout(() => this.attachHistoryScroll(), 0);
+  }
+
+  // Carga de usuarios paginada
+  private loadUsers() {
+    if (this.isLoadingUsers || this.userPage >= this.userTotalPages) return;
+    this.isLoadingUsers = true;
+
+    const host: HTMLElement = this.scrollRef.nativeElement;
+    const scrollEl = host.querySelector('.simplebar-content-wrapper')!;
+    const prevScrollHeight = scrollEl.scrollHeight;
+    if (!scrollEl) {
+      console.error('Not Found .simplebar-content-wrapper');
+      return;
+    }
+
+    const path = `${this.userPage}/byChatSessionStart`;
+    const params = [
+      `startDate=${this.getTodayDate(true)}`,
+      `endDate=${this.getTodayDate(false)}`,
+      `pageSize=100`
+    ].join('&');
+
+    this.userListService.getWhatsAppUsers(`${path}?${params}`)
+      .subscribe({
+        next: resp => {
+          this.userTotalPages = resp.page!.totalPages!;
+          this.users = [...this.users, ...(resp.content || [])];
+          this.isLoadingUsers = false;
+
+          // corregir scroll: nueva altura menos la antigua
+          setTimeout(() => {
+            const newScrollHeight = scrollEl.scrollHeight;
+            scrollEl.scrollTop = newScrollHeight - prevScrollHeight;
+          }, 0);
+        },
+        error: err => {
+          this.alertToast.showToast('error', 'Failed to load users', 3000);
+          console.error('Error loading users:', err);
+          this.isLoadingUsers = false;
         }
       });
+  }
+
+  // Attach infinite scroll para usuarios
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.loadUsers();
+      this.attachUsersScroll();
+    }, 0);
+  }
+
+  // Scroll infinito de usuarios
+  private attachUsersScroll() {
+    const host: HTMLElement = this.scrollRef.nativeElement;
+    const scrollEl = host.querySelector('.simplebar-content-wrapper') as HTMLElement;
+    if (!scrollEl) {
+      console.error('No found .simplebar-content-wrapper');
+      return;
     }
 
-    // Seleccionar a un usuario
-    selectUser(identificacion: string, threadId:string, phone: string) {
-      this.isSelected = phone;
-      if(identificacion == null && threadId == null){
-        this.hasHistory = false;
-        this.getUserInfo('whatsappPhone', phone)
-      }else{
-        this.identificacion = identificacion;
-        this.threadId = threadId
-        switch (this.chatType) {
-          case 0:
-            this.chatLabel = "Today's Chat Messages"
-            this.getUserInfo('identificacion', identificacion, this.startDate, this.endDate);
-            break;
-          case 1:
-            this.chatLabel = "Chat Session Messages"
-            this.getUserInfo('identificacion', identificacion, this.chatStartDate, this.chatEndDate)
-            break
-          case 3:
-            this.chatLabel = "All Chat Messages"
-            this.getUserInfo('identificacion', identificacion);
-            break;
-        }
-      }
-      
+    scrollEl.scrollTop = 0;
+
+    fromEvent(scrollEl, 'scroll')
+      .pipe(
+        auditTime(200),
+        filter(() => {
+          const { scrollTop, scrollHeight, clientHeight } = scrollEl;
+          const distanciaAlFondo = scrollHeight - (scrollTop + clientHeight);
+          const overflow = scrollHeight > clientHeight;
+          const nearBottom = distanciaAlFondo <= 100;
+          const hasMore = this.userPage < this.userTotalPages - 1;
+          const notLoading = !this.isLoadingUsers;
+          return overflow && nearBottom && hasMore && notLoading;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.userPage++;
+        this.loadUsers();
+      });
+  }
+
+  // Buscador de usuario
+  onSearchChange(text: string) {
+    this.searchText = text;
+    this.searchText$.next(text);
+  }
+
+  // Cambiar campo de búsqueda
+  onFieldChange(field: 'identificacion' | 'whatsappPhone') {
+    this.searchField = field;
+    if (this.searchText.trim()) {
+      this.executeSearch();
+    }
+  }
+
+  // Metodo para ejecutar la búsqueda
+  private executeSearch() {
+    const value = this.searchText.trim();
+    if (!value) {
+      this.users = [];
+      this.userPage = 0;
+      this.userTotalPages = 1;
+      setTimeout(() => this.loadUsers(), 0);
+      this.noUsersFound = false;
+      return;
     }
 
-    // Obtener los datos de un usuario
-    getUserInfo(field: string, value:string, startDate?: string, endDate?: string){
-      this.chatHistoryService.getUserInfo(field, value).subscribe({
-      next: (res: WhatsAppUser) => {   
-        this.userInfo = res     
+    this.searching = true;
+    this.noUsersFound = false;
 
-        // obtener los keys 
-        const allowedKeys = ['whatsappPhone', 'threadId', 'identificacion']
-        this.userKeys  = Object.keys(this.userInfo)
-        .filter((key: string) =>
-          allowedKeys.includes(key)
-        ).map((key: string) => 
-          key === 'whatsappPhone' ? 'Phone Number' : key && key === 'identificacion' ? 'Identification' : key
-        ) as (keyof Content) [];
-
-        // Verificar si el usuario tiene hilo y buscar el historial
-        if(res.threadId != null){
-          this.hasHistory = true
-          if(startDate && endDate){
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            this.getDatedChatHistory(res.threadId, start, end)
-          }else{
-            this.chatType = 3;
-            this.getDatedChatHistory(res.threadId)
-          }
-        }else{
-          this.hasHistory = false;
-        }
-      },
-      error: (err: any) => {
-        console.log('Error al obtener la infomacion del usuario: ', err)
-      }
-    });
-    }
-
-    // Metodo para filtrar el historial al cambiar de fecha
-    onChatDateChange() {  
-      if(this.chatStartDate  && this.chatEndDate ){
-        this.chatLabel = 'Filtered Chat Messages';
-        this.chatType = 2;
-        const startDateTime = new Date(`${this.chatStartDate}T00:00:00`);
-        const endDateTime = new Date(`${this.chatEndDate}T23:59:59`);
-        this.getDatedChatHistory(this.threadId, startDateTime, endDateTime);
-
-        this.chatFilter = !this.chatFilter;
-
-        const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-        this.chatFilterLabel = `${startDateTime.toLocaleDateString(undefined, options)} - ${endDateTime.toLocaleDateString(undefined, options)}`;
-
-      } else {
-        this.getChatHistory(this.threadId);
-      }
-
-    }
-
-    // Metodo para filtrar los usuarios por fecha de su ultima interaccion
-    onListDateChange() {  
-      console.log(this.listSearchFilter)
-      if(this.listStartDate  && this.listEndDate ){
-        if(this.listSearchFilter == 'ChatSessionStart'){
-          this.chatType = 1;
-          this.chatStartDate = `${this.listStartDate}T00:00:00`;
-          this.chatEndDate = `${this.listEndDate}T23:59:59`;
-        }else{
-          this.chatType = 3
-        }
-
-        const startDateTime = new Date(`${this.listStartDate}T00:00:00`);
-        const endDateTime = new Date(`${this.listEndDate}T23:59:59`);
-
-        this.getDatedUsers(startDateTime, endDateTime);
-        this.listFilter = !this.listFilter
-
-        const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-        this.listFilterLabel = `${startDateTime.toLocaleDateString(undefined, options)} - ${endDateTime.toLocaleDateString(undefined, options)}`;
-      }else{
-        this.listFilterLabel = 'Filter'
-      }
-
-    }
-
-    // Obtener historial del chat dentro de un rango de fechas 
-    getDatedChatHistory(threadId:string, startDate?:Date, endDate?: Date){
-      this.chatHistoryService.getChatHistory(threadId).subscribe({
-        next: (chat: ChatAssistenteVirtual) => {
-
-          if(startDate && endDate){ 
-            switch (this.chatType) {
-              case 0:
-                this.chatLabel = "Today's Chat Messages"
-                break;
-              case 1:
-                this.chatLabel = 'Chat Session Messages'
-                break;
-              case 2:
-                this.chatLabel = 'Filtered Chat Messages'
-                break;
-              default:
-                this.chatLabel = 'All Chat Messages'
-                break;
-            }
-
-            this.hasHistory = true;
-            this.chatHistory = chat.history ?? []
-
-            // Filter messages within the date range
-            this.chatHistory = this.chatHistory.filter(message => {
-              let messageTime = parseCustomTimestamp(message.timestamp!);
-              return messageTime <= endDate! && messageTime >= startDate!;
-            }).slice().reverse();
-
-            if(this.chatHistory.length == 0){
-              this.hasHistory = false;
-            }
-
-          }
-          else{
-            console.log('Getting all history.')
-            this.getChatHistory(threadId)
-          }
-
-        },
-        error: (err)=> {
-          console.log('Error al obtener el historial dentro de las fechas:', err)
-        }
-      })
-    }
-
-    // Obtener todo el historial del usuario
-    getChatHistory(threadId: string){
-      this.chatHistoryService.getChatHistory(threadId).subscribe({
-        next: (chat: ChatAssistenteVirtual) => {
-          if(!chat || chat.history?.length == 0){
-            this.hasHistory = false;
-            return;
-          }
-          this.chatType = 3;
-          this.chatLabel = 'All Chat Messages'
-          this.chatHistory = (chat.history ?? []).slice().reverse();
+    this.userListService
+      .getUserInfo(this.searchField, value)
+      .subscribe({
+        next: (user) => {
+          this.users = [user];
+          this.searching = false;
+          this.noUsersFound = false;
         },
         error: (err) => {
-          console.log('Error al obtener el historial del chat: ', err)
+          if (err.status === 404) {
+            this.users = [];
+            this.noUsersFound = true;
+          }
+          this.searching = false;
         }
-      })
+      });
+  }
+
+  // Obtener la fecha de hoy en formato ISO 8601 con hora de inicio o fin del día
+  getTodayDate(init: boolean): String {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    if (init) {
+      const formattedDate = `${year}-${month}-${day}T00:00:00`;
+      return formattedDate;
+    } else {
+      const formattedDate = `${year}-${month}-${day}T23:59:59`;
+      return formattedDate;
+    }
+  }
+
+  // Obtener Hace cuanto tiempo escrito un mensaje
+  getTimeAgo(value?: string | Date | null): string {
+    if (!value) {
+      return 'N/A';
+    }
+    const date = value instanceof Date ? value : new Date(value);
+
+    const diff = Date.now() - date.getTime();
+    const mins = Math.floor(diff / 1000 / 60);
+    if (mins < 60) {
+      return `${mins} min atrás`;
     }
 
-    //para filtrar los usuarios
-    openListFilter(){
-      this.listFilter = !this.listFilter
-      if(this.listFilter == true){
-        this.listSearchFilter =  this.listSearchFilter;
-      }
-    }
-    //para filtrar el chat
-    openChatFilter(threadId: string){
-      this.threadId = threadId;
-      this.chatFilter = !this.chatFilter
-    }
+    const hrs = Math.floor(mins / 60);
+    return `${hrs} hora${hrs > 1 ? 's' : ''} atrás`;
+  }
 
-    //  Metodo para cambiar el tamaño de la pagina
-    onPageSizeChange(value: string) {
-      this.pageSize = parseInt(value, 10);
-      this.getDatedUsers(new Date(this.startDate!), new Date(this.endDate!));
+  // Devuelve un string con los tipos de rol o 'None'
+  getRolesString(roles?: RolesUsuario[]): string {
+    if (!roles?.length) {
+      return 'None';
     }
+    return roles
+      .map((r) => r.tipoRol ?? '')
+      .filter((t) => !!t)
+      .join(', ');
+  }
 
-    //Metodo para ir a la pagina anterior 
-    previousPage() {
-      if (this.page > 0) {
-        this.page--;
-        this.getDatedUsers(new Date(this.startDate!), new Date(this.endDate!));
-      }
-    }
+  // Toggle Tab Sidebar
+  toggleTab(show: boolean) {
+    this.showTab = show;
+  }
 
-    // Metodo para ir a la siguiente pagina
-    nextPage() {
-      if (this.page < this.totalPages - 1) {
-        this.page++;
-        this.getDatedUsers(new Date(this.startDate!), new Date(this.endDate!))
-      }
-    }
+  // Togle Tab Search Chat
+  toggleSearchChat(): void {
+    this.showSearchChat = !this.showSearchChat;
+  }
 
-    // Metodo para ir a una pagina especifca
-    goToPage(page: number) {
-      this.page = page;
-      this.getDatedUsers(new Date(this.startDate!), new Date(this.endDate!))
-    }
-
-}
-
-// Metodo para convertir el timestamp a fecha valida
-function parseCustomTimestamp(ts: string): Date {
-  const [datePart, timePart] = ts.split(" ");
-  const [day, month, year] = datePart.split("-");
-  return new Date(`${year}-${month}-${day}T${timePart}`);
+  // Limpiar recursos al destruir el componente
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

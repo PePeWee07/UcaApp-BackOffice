@@ -6,7 +6,7 @@ export interface WhatsAppUserList {
 export interface Content {
     id?:                 number;
     whatsappPhone?:      string;
-    threadId?:           string;
+    previousResponseId?: string;
     limitQuestions?:     number;
     firstInteraction?:   Date;
     lastInteraction?:    Date;
@@ -19,7 +19,7 @@ export interface Content {
     identificacion?:     string;
     chatSessions?:       ChatSession[];
     erpUser?:            ERPUser;
-    userTickets:         UserTicket[];
+    userTickets?:         UserTicket[];
 }
 
 export interface ChatSession {

@@ -1,26 +1,6 @@
-<div class="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
+<div class="flex flex-col-reverse justify-end gap-6 md:flex-row md:items-center">
 
   <!-- Router Navigation -->
-  <div class="capitalize">
-
-    <nav aria-label="breadcrumb" class="w-max">
-      <ol class="flex flex-wrap items-center w-full bg-opacity-60 rounded-md bg-transparent p-0 transition-all">
-        <li class="flex items-center text-blue-gray-900 antialiased font-sans text-sm font-normal leading-normal cursor-pointer transition-colors duration-300 hover:text-blue-500">
-          <a href="#">
-            <p class="block antialiased font-sans text-sm leading-normal text-blue-900 font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100">{{'dashboards' | translate }}</p>
-          </a>
-          <span class="text-gray-500 text-sm antialiased font-sans font-normal leading-normal mx-2 pointer-events-none select-none">/</span>
-        </li>
-        <li class="flex items-center text-blue-900 antialiased font-sans text-sm font-normal leading-normal cursor-pointer transition-colors duration-300 hover:text-blue-500">
-          <p class="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">{{'home' | translate }}</p>
-        </li>
-      </ol>
-    </nav>
-
-    <h6 class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-gray-900">{{'home' | translate }}</h6>
-
-  </div>
-
   <div class="flex items-center">
 
     <div mndropdown [placement]="'bottom-start'" class="relative flex items-center dropdown h-header">
@@ -47,7 +27,7 @@
     </div>
 
     <!-- Settings -->
-    <div class="relative inline-block text-left ml-3">
+    <div class="relative inline-block text-left ml-3 mr-6">
       <div>
         <button type="button" (click)="toggleDropdown()" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5 text-blue-gray-500">
@@ -72,14 +52,16 @@
     </div>
 
     <!-- Menu-side -->
-    <button class="relative middle w-10 h-10 text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 xl:hidden"
-            type="button" (click)="toggleSidebar()">
-      <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" stroke-width="3" class="h-6 w-6 text-blue-gray-500">
-          <path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd"></path>
-        </svg>
-      </span>
-    </button>
+    <div>
+      <button class="relative middle w-10 h-10 text-gray-500 hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 xl:hidden"
+              type="button" (click)="toggleSidebar()">
+        <span class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" stroke-width="3" class="h-6 w-6 text-blue-gray-500">
+            <path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd"></path>
+          </svg>
+        </span>
+      </button>
+    </div>
 
   </div>
 </div>

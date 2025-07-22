@@ -1,308 +1,628 @@
-<div class="py-1">
-  <!-- Title -->
-  <div>
-    <h2 class="text-2xl font-semibold leading-tight pt-0 pb-5 pl-10 text-blue-600">{{'History' | translate}}</h2>
-  </div>
+<div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto relative">
+  <div class="flex gap-5 mt-5">
 
-    <!-- Chat History-->
-  <div class="container group-data-[content=boxed]:max-w-boxed mx-auto relative">
-    <div class="flex gap-5 mt-5">
-        
-        <!-- User List Section -->
-         <div class="block w-full  xl:block xl:w-80 shrink-0" *ngIf="withPermissions(['READ'])">
-            <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_1.4)] card xl:h-[calc(100%_-_theme('spacing.5'))]">
-                <ngx-simplebar class="max-h-[calc(100vh_-_390px)] xl:max-h-[calc(100%_-_theme('spacing.5'))]">
-                    <ul class="flex flex-col gap-1">
-                        <div class=" border-b border-dashed">
-                            <div class="flex items-center gap-3 pb-3">
-                                <h6 class="text-15 grow p-5 pb-2">{{'User List' | translate | uppercase}}</h6>
-                            </div>
-                            <!-- Search -->
-                            <div class="mt-2 pb-2 px-2 flex">
-                                <div class="relative xl:col-span-2">
-                                    <input type="text" 
-                                    [(ngModel)]="searchText"
-                                    (keyup)="onSearch($event)"
-                                    (keyup.enter)="searchUser(searchFilter)"
-                                    class="pl-8 rtl:pr-8 search form-input border-slate-200 border-r-transparent rounded-r-none focus:outline-none focus:border-custom-500 disabled:bg-slate-100  disabled:text-slate-500 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Search" autocomplete="on" translate="Search">
-                                    <lucide-angular name="search" [class]="'ml-2 inline-block size-4 absolute top-2.5 text-slate-500 fill-slate-100'"></lucide-angular>
-                                </div>
-                                <select
-                                class=" px-2 py-2 rounded-r border border-l-transparent border-slate-200 text-sm text-slate-400 focus:text-blue-500"
-                                [(ngModel)]="searchFilter"
-                            
-                                
-                                >
-                                    <option value="whatsappPhone">{{'Phone Number' | translate}}</option>
-                                    <option value="identificacion">{{'Identification' | translate}}</option>
-                                </select>
-                            </div>
-                             <!-- List Filters -->
-                            <div class="pb-5 px-2">
-                                <div class="flex">
-                                    <!-- today button -->
-                                    <button class=" border p-2 rounded-l rounded-r text-sm hover:bg-gray-100 hover:shadow-md mr-1"
-                                        (click)="getTodaysUsers()"
-                                        >{{'Today' |translate}}
-                                    </button>
+    <!--! Sidebar -->
+    <div class="fixed inset-x-0 bottom-12 2xl:w-20 shrink-0 xl:relative z-[20] text-center xl:bottom-auto">
+      <div class="xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] inline-block card xl:h-[calc(100%_-_theme('spacing.5'))] shadow-lg xl:shadow-md">
+        <div class="flex items-center h-full p-2 2xl:p-4 xl:flex-col">
+          <a href="javascript:void(0);" class="hidden xl:block"><img src="assets/images/logo-sm.png" alt="" class="h-8 mx-auto"></a>
 
-                                    <!-- Select Page Size -->
-                                    <div class="relative text-sm">
-                                        <select
-                                            (change)="onPageSizeChange($any($event.target).value)"
-                                            class="h-full rounded-l rounded-r border block appearance-none w-full bg-white py-1 px-2 pr-4 mr-1 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
-                                            >
-                                            <option value="5">5</option>
-                                            <option value="10">10</option>
-                                            <option value="20">20</option>
-                                        </select>
-                                        <div class="pointer-events-none absolute inset-y-0 right-1 flex items-center text-gray-700">
-                                            <lucide-icon name="chevron-down" [size]="18" [strokeWidth]="1"></lucide-icon>
-                                        </div>
-                                    </div> 
+          <app-nav [tabSetName]="'chat'" [defaultActiveKey]="'chat'" class="flex gap-2 my-auto text-center xl:pt-8 xl:flex-col nav-tabs">
 
-                                    <button class="border p-2 rounded-l rounded-r absolute right-2 flex text-sm items-center justify-center overflow-hidden shadow-sm transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-blue-500 before:duration-500 before:ease-out hover:shadow-lg hover:before:h-56 hover:before:w-56 hover:text-white" (click)="openListFilter()">
-                                        <span  class="pr-3 z-10 hover:text-white">{{listFilterLabel | translate}}</span>
-                                        <lucide-icon name="calendar-search" [size]="20" [strokeWidth]="1.5" class="z-10"></lucide-icon>
-                                    </button>
-                                </div>
+            <app-nav-item [tabSetName]="'chat'" [eventKey]="'chat'" (click)="toggleTab(true)" class="group/item tabs chatTab">
+              <a href="javascript:void(0);" data-tab-toggle data-target="mainChatList"
+                class="inline-flex items-center justify-center  w-12 h-12  transition-all duration-200 ease-linear rounded-md mainChatList"><lucide-angular
+                  name="messages-square"
+                  [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+            </app-nav-item>
 
-                                <div  *ngIf="listFilter" class=" rounded-l rounded-r border border-slate-200 w-fit mt-2 justify-self-end" (change)="onListDateChange()">
-                                    <div class="pl-3 py-1 justify-content-end">
+            <app-nav-item [tabSetName]="'chat'" [eventKey]="'contact'" class="group/item tabs">
+              <a href="javascript:void(0);" data-tab-toggle data-target="contactList"
+                class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md"><lucide-angular
+                  name="square-user"
+                  [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+            </app-nav-item>
 
-                                        <div class="flex items-center">
-                                             <input [(ngModel)]="listSearchFilter" value="LastInteraction" id="radioDefault1" type="radio" name="colored-radio" class="size-3 border rounded-full text-purple-600 bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500">
-                                            <label for="radioDefault1" class="ms-2 text-sm text-gray-900 dark:text-gray-300">{{'By Last Interaction' | translate}}</label>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <input [(ngModel)]="listSearchFilter" value="ChatSessionStart" id="radioDefault2" type="radio"  name="colored-radio" class="size-3 border rounded-full text-purple-600 bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500">
-                                            <label for="radioDefault2" class="ms-2 text-sm text-gray-900 dark:text-gray-300">{{'By Chat Session' | translate}}</label>
-                                        </div>
+            <app-nav-item [tabSetName]="'chat'" [eventKey]="'AI'" (click)="toggleTab(false)" class="group/item botTab">
+              <a href="javascript:void(0);" data-tab-toggle data-target="botChat"
+                class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md botChat"><lucide-angular
+                  name="bot"
+                  [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+            </app-nav-item>
 
-                                    </div>
-                                    <div class="flex border-t">
+          </app-nav>
+        </div>
+      </div>
+    </div>
+
+    <!--! Panel List -->
+    <div class="block w-full xl:block xl:w-80 shrink-0 menu-content">
+      <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card xl:h-[calc(100%_-_theme('spacing.5'))]">
+        <div class="flex flex-col h-full">
+          <div class="tab-content">
+
+            <!--! LISTA DE CHAT -->
+            <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'chat'" class="block tab-pane" id="mainChatList">
+              <div class="card-body">
+                <div class="flex items-center gap-3">
+                  <h6 class="text-15 grow">Chats</h6>
+                </div>
+
+                <!-- <div class="relative mt-5">
+                  <input type="text" class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                  [ngModel]="searchText" (ngModelChange)="onSearchChange($event)"
+                  placeholder=" Search for number" autocomplete="off">
+                  <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
+                </div> -->
+
+                <!-- Input de búsqueda -->
+                <div class="relative mt-5 flex items-center gap-2">
+                  <lucide-angular name="search" class="inline-block size-4 text-slate-500 ml-2"></lucide-angular>
+                  <select
+                    [(ngModel)]="searchField"
+                    (ngModelChange)="onFieldChange($event)"
+                    class="form-select w-30">
+                    <option value="identificacion">DNI</option>
+                    <option value="whatsappPhone">WhatsApp</option>
+                  </select>
+
+                  <input type="text" class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" [(ngModel)]="searchText" (ngModelChange)="onSearchChange($event)" placeholder="Search…" autocomplete="off"/>
+                </div>
+
+                <!-- Data Picker -->
+                <!-- <div class="flex border-t">
                                         <div class="relative py-2 px-3">
-                                            <input [(ngModel)]="this.listStartDate" [max]="getToday()" id="datepicker-range-start" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start">
+                                            <input  id="datepicker-range-start" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start">
                                         </div>
                                         <span class="text-black pt-2 text-sm">-</span>
                                         <div class="relative  py-2 px-3">
-                                            <input [(ngModel)]="this.listEndDate" [max]="getToday()"  id="datepicker-range-end" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end">
+                                            <input  id="datepicker-range-end" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-fit ps-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end">
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Users -->
-                        @if (filteredUsers.length > 0) {
-                            @for (user of filteredUsers; track $index;){ 
-                            <li *ngIf="withPermissions(['READ'])"
-                                (click)="selectUser(user.identificacion!, user.threadId!, user.whatsappPhone!)"
-                                [ngClass]="{'border-b-blue-500 border-t-blue-500 border-l-blue-500 border-r-blue-500' : isSelected == user.whatsappPhone!}"
-                                class="border rounded-l rounded-r border-slate-200 hover:border-blue-500 focus:border-b-blue-500 my-0 mx-2">
-                                <div class="flex items-center gap-3 px-5 py-2 group/item hover:text-blue-500">
-                                    <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
-                                        <lucide-angular name="user" ng-reflect-name="user"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user absolute left-0 right-0 inline-block size-10 mx-auto stroke-1 -bottom-1 fill-slate-200 dark:fill-zink-500"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" key="975kel"></path><circle cx="12" cy="7" r="4" key="17ys0d"></circle></svg></lucide-angular>
-                                    </div>
-                                    <div class="overflow-hidden grow">
-                                        <h6 *ngIf="user.erpUser" class="mb-1">{{user.erpUser.nombres}} {{user.erpUser.apellidos}}
-                                        </h6>
-                                        <h6 *ngIf="!user.erpUser" class="mb-1">{{user.identificacion}}
-                                        </h6>
-                                        <div class="flex gap-x-2">
-                                            <div>
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{userKeys[0] | translate }}: </p>
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{userKeys[2] | titlecase | translate }}: </p>
-                                            </div>
-                                            <div class="">
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200 text-right">{{user.whatsappPhone}}</p>
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200 text-right">{{user.identificacion}}</p>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div [ngClass]="{'text-blue-500': isSelected == user.whatsappPhone!}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </li>
-                            }
-                        }@else {
-                            <div class="p-10 flex" style="justify-content: center">
-                                <span class="text-sm text-slate-400">{{'users-not-found' | translate}}</span>
-                            </div>
-                        }
-                    </ul>
-                    <div>
-                    <!-- Pagination -->
-                        <div class="px-5 py-5 pt-0 mt-2 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-                            <!-- Counter Page -->
-                            <div class="inline-flex my-2 xs:mt-0 text-sm"> 
-                                <!-- Previous Page -->
-                                <button
-                                [disabled]="page === 0"
-                                (click)="previousPage()"
-                                class=" hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 hover:text-white px-2 py-0 rounded-l transition duration-300 ease-in-out hover:bg-blue-500 hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
-                                >
-                                <lucide-icon name="chevron-left" [size]="20" [strokeWidth]="1"></lucide-icon>
-                                </button>
+                                    </div> -->
 
-                                <!-- Page Numbers -->
-                                @for (i of pagesArray; track $index) {
-                                    <button
-                                    [class.active]="i === page"
-                                    (click)="goToPage(i)"
-                                    class="hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 hover:text-white px-4 py-1 transition duration-300 ease-in-out hover:bg-blue-500 text-gray-800 hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40"
-                                    >
-                                    {{ i + 1 }}
-                                    </button>
-                                }
-                                <!-- Next Page -->
-                                <button
-                                [disabled]="page >= totalPages - 1"
-                                (click)="nextPage()"
-                                class="hover:bg-gradient-to-tr hover:from-blue-600 hover:to-blue-400 hover:text-white px-2 py-0 rounded-r transition duration-300 ease-in-out hover:bg-blue-500 text-black hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/40 "
-                                >
-                                <lucide-icon name="chevron-right" [size]="20" [strokeWidth]="1"></lucide-icon>
-                                </button>
-                            </div>
-                            <span class="text-xs xs:text-sm text-gray-900">
-                                Showing {{ page + 1 }} of {{ totalPages }} pages of
-                                {{ totalElements }} Entries
-                            </span>
-                        </div>
-                    </div>
-                </ngx-simplebar>
-            </div>
-         </div>
-        <!-- Chat Messages Section -->
-        <div *ngIf="userInfo && withPermissions(['READ'])" class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full [&.show]:block [&.active]:xl:block active chat-content grow card">
-            <div class="relative flex flex-col h-full">
-                <div class="card-body ">
-                    <div class="flex items-center gap-3">
-                        <a class="flex items-center gap-3 ltr:mr-auto rtl:ml-auto shrink-0">
-                            <div>
-                                <!-- Message Date Filter -->
-                                <div class="flex">
-                                    <h6 *ngIf="userInfo.erpUser">{{userInfo.erpUser.nombres}} {{userInfo.erpUser.apellidos}}
-                                        <span class="text-sm  bg-blue-500 rounded-full p-1 ml-5 text-white dark:text-zink-200" *ngFor="let rol of userInfo.erpUser?.rolesUsuario">{{rol.tipoRol ?? 'No Role'}} </span>                                        
-                                    </h6>
-                                    <h6 *ngIf="!userInfo.erpUser">{{userInfo.identificacion}}
-                                        <span class="text-sm  bg-blue-500 rounded-full p-1 ml-5 text-white dark:text-zink-200" >{{'None' | translate}}</span>                                        
-                                    </h6>
-                                    <div class="flex absolute right-5">
-                                        <button (click)="openChatFilter(userInfo.threadId!)"  
-                                                class="relative flex px-5 py-1 rounded-full items-center justify-center overflow-hidden shadow-sm transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-blue-500 before:duration-500 before:ease-out hover:shadow-lg hover:before:h-56 hover:before:w-56 hover:text-white" >
-                                            <span class="hover:text-white relative z-10 text-sm">{{chatFilterLabel | translate}}</span>
-                                            <span class="pl-3 z-10">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>
-                                            </span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div *ngIf="chatFilter" class=" flex absolute rounded-l rounded-r right-5 border border-slate-100 shadow-lg mt-2">
-                                        <div class="relative py-2 px-5">
-                                            <input mwlflatpickr="" data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true"  [(ngModel)]="this.chatStartDate" (change)="onChatDateChange()" [max]="getToday()" id="datepicker-range-start" type="date" class="border-none text-sm rounded-lg focus:ring-blue-500 block w-full ps-4 p-1  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date start">
-                                        </div>
-                                        <span class="text-black pt-3 text-sm">-</span>
-                                        <div class="relative  py-2 px-5">
-                                            <input [(ngModel)]="this.chatEndDate" (change)="onChatDateChange()" [max]="getToday()" id="datepicker-range-end" type="date" class=" border-none text-sm rounded-lg focus:ring-blue-500 block w-full ps-4 p-1  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date end">
-                                        </div>
-                                </div> <!-- end filter -->
-                                <!-- User Information -->
-                                <div class="flex gap-5 pt-5">
-                                    <div>
-                                        <p *ngFor="let key of userKeys" class="text-sm text-slate-500 dark:text-zink-200">{{key | titlecase | translate}}: </p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-slate-500 dark:text-zink-200">{{userInfo.whatsappPhone ?? 'N/A'}}</p>
-                                        <p class="text-sm text-slate-500 dark:text-zink-200">{{userInfo.threadId ?? 'N/A'}}</p>
-                                        <p class="text-sm text-slate-500 dark:text-zink-200">{{userInfo.identificacion ?? 'N/A'}}</p>
-                                        
-                                    </div>
-                                </div>
-                            </div>
+                <!-- opcional: spinner mientras busca -->
+                <div *ngIf="searching" class="py-2 text-center text-sm text-gray-500">
+                  📥 Searching...
+                </div>
+
+              </div>
+
+              <ngx-simplebar class="max-h-[calc(100vh_-_380px)] xl:max-h-[calc(100vh_-_300px)]" #scrollRef>
+                <ng-container *ngIf="users.length > 0; else noUsersTpl">
+                  <ul class="flex flex-col gap-1" id="chatList">
+                    <li class="px-5">
+                      <p class="mb-1 text-slate-500 dark:text-zink-200">Today Chats</p>
+                    </li>
+                    @for(data of users;track $index ){
+                      <li (click)="chatUsername(data, getRolesString(data.erpUser?.rolesUsuario))">
+                        <a href="javascript:void(0);" [ngClass]="{'active': data.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 group/item online">
+                          <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
+                            <img src="../../../assets/images/users/user-dummy-img.jpg" alt="" class="rounded-full h-9">
+                            <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
+                          </div>
+
+                          <div class="overflow-hidden grow">
+                            <h6 class="mb-1">{{data.erpUser?.nombres || "Anonymus"}}</h6>
+                            <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{data.erpUser?.identificacion || "none"}}</p>
+                          </div>
+
+                          <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
+                            <small>{{getTimeAgo(data.lastInteraction)}}</small>
+                          </div>
                         </a>
+                      </li>
+                    }
+                  </ul>
+                </ng-container>
+                <ng-template #noUsersTpl>
+                  <div class="p-6 text-center text-slate-600 dark:text-zink-400">
+                    <p class="mb-2">❌ No se encontró ningún usuario con {{searchField}}=“{{ searchText }}”</p>
+                  </div>
+                </ng-template>
+                <div *ngIf="isLoadingUsers" class="text-center py-2">
+                  📥 Loading more usuarios…
+                </div>
+              </ngx-simplebar>
+            </mn-tab-pane>
+
+            <!--! LISTA DE CONTACTOS -->
+            <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'contact'" class=" tab-pane" id="contactList">
+              <div class="card-body">
+                <div class="flex items-center gap-3">
+
+                  <button
+                    class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500"><lucide-angular
+                      name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular></button>
+
+                  <h6 class="text-15 grow">Contacts</h6>
+                </div>
+
+                <div class="relative mt-5">
+
+                  <input type="text"
+                    class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                    placeholder="Search for ..." autocomplete="off">
+
+                  <lucide-angular name="search"
+                    [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
+
+                </div>
+              </div>
+
+              <ngx-simplebar class="max-h-[calc(100vh_-_390px)] xl:max-h-[calc(100vh_-_300px)]">
+                <ul class="flex flex-col gap-1">
+                  <li class="px-5">
+                    <p class="mb-1 text-slate-500 dark:text-zink-200">Contact List</p>
+                  </li>
+
+                  @for (item of contacts; track $index) {
+                  <li>
+                    <div class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 group/item dark:[&.active]:bg-zink-600 offline">
+
+                      <div
+                        class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
+                        <img src="{{item.avatar}}" alt="" class="rounded-full h-9">
+                        <span class="absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full group-[.online]/item:bg-green-400 group-[.offline]/item:bg-slate-400 dark:group-[.offline]/item:bg-zink-500 bg-red-500"></span>
+                      </div>
+
+                      <a href="javascript:void(0);" class="overflow-hidden grow">
+                        <h6 class="mb-1">{{item.name}}</h6>
+                        <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{item.role}}</p>
+                      </a>
+
+                      <div class="relative dropdown shrink-0" mndropdown placement="bottom-end">
+
+                        <button type="button" mndropdownToggle class="dropdown-toggle" id="contactListDropdown1"
+                          data-bs-toggle="dropdown">
+                          <lucide-angular name="more-vertical"
+                            [class]="'inline-block size-4 ml-1'">
+                          </lucide-angular>
+                        </button>
+
+                        <ul mndropdownMenu
+                          class="absolute z-50  py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600"
+                          aria-labelledby="contactListDropdown1">
+                          <li>
+                            <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
+                              href="javascript:void(0);">Send Message</a>
+                          </li>
+
+                          <li>
+                            <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
+                              href="javascript:void(0);">Edit</a>
+                          </li>
+
+                          <li>
+                            <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
+                              href="javascript:void(0);">Delete</a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
+                  </li>
+                  }
+                </ul>
+              </ngx-simplebar>
+            </mn-tab-pane>
+
+            <!--! PANEL IA -->
+            <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'AI'" class="tab-pane" id="botChat">
+
+              <div class="card-body">
+
+                <div class="flex items-center gap-3">
+
+                  <button
+                    class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500"><lucide-angular
+                      name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular></button>
+
+                  <h6 class="text-15 grow">AI Bot</h6>
+
                 </div>
-                <!-- Indivdual Messages Dynamically aligned based on role-->
-                <div class="relative bg-slate-50 dark:bg-zink-600/50 grow" style="box-shadow: 0px 1px 5px -2px rgba(0,0,0,0.44) inset;">
-                    <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)] " style="font-size: 12px">
-                        @if (chatHistory.length > 0 && hasHistory) {
-                            <div class="py-5 border-b border-blue-300 line mx-5">
-                                <div class="absolute flex right-1/2" id="recent">
-                                    <p class="text-blue-400">{{chatLabel | translate}}</p>
-                                </div>
-                            </div>
-                            @for (message of chatHistory; track $index){
-                            <!-- User Message Wrapper Right Aligned -->
-                            <ul class="flex flex-col gap-5 list-none card-body" *ngIf="message.role === 'user'">
-                                <li class="flex chat-message group/item" [ngClass]="{'group-[.right]/item': message.role === 'user', 'justify-end': message.role == 'user'}">
-                                    <div class="flex gap-3 ">
-                                        <div class="flex items-center self-end justify-center text-gray-500 group/item" style="font-size: 10px" >
-                                            {{ message.timestamp}}
-                                        </div>
-                                        <div class=" group-[.right]/item grid gap-3 justify-end self-end">
-                                            <div class="grid gap-0">
-                                                <div class=" p-3 text-slate-400 justify-self-end">
-                                                    {{message.role | translate | uppercase}}
-                                                </div>
-                                                <div class="relative p-4 bg-white dark:bg-zink-700 rounded-b-md rounded-t-md max-w-sm shadow-sm 2xl:max-w-sm" id="message-content" style="box-shadow: 0 2px 3px 0 rgb(0 0 0 / 0.09);">
-                                                    {{message.content}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <a class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group/item">
-                                            <lucide-angular name="user" ng-reflect-name="user">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user absolute left-0 right-0 inline-block size-10 mx-auto stroke-1 -bottom-1 fill-slate-200 dark:fill-zink-500">
-                                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" key="975kel"></path><circle cx="12" cy="7" r="4" key="17ys0d"></circle>
-                                                </svg>
-                                            </lucide-angular>
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                            <!-- Assistant Message Wrapper Left Aligned -->
-                            <ul class="flex flex-col gap-5 list-none card-body" *ngIf="message.role === 'assistant'">
-                                <li class="flex chat-message group/item" [ngClass]="{'group-[.right]/item': message.role === 'assistant'}">
-                                    <div class="flex gap-3 ">
-                                        <a class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-blue-300 text-blue-700 dark:bg-zink-600 dark:text-zink-200 shrink-0 group/item">
-                                        <lucide-angular _ngcontent-ng-c2293930871="" bg="currentColor" name="bot" class="size-5" ng-reflect-name="bot"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot size-5"><path d="M12 8V4H8" key="hb8ula"></path><rect width="16" height="12" x="4" y="8" rx="2" key="enze0r"></rect><path d="M2 14h2" key="vft8re"></path><path d="M20 14h2" key="4cs60a"></path><path d="M15 13v2" key="1xurst"></path><path d="M9 13v2" key="rq6x2g"></path></svg></lucide-angular>
-                                        </a>
-                                        <div class="grow group/item grid gap-3">
-                                            <div class="grid gap-0">
-                                                <div class="relative p-3 text-blue-400">
-                                                    {{message.role | translate | uppercase }}
-                                                </div>
-                                                <div class="relative p-4 bg-white dark:bg-zink-700 rounded-b-md rounded-t-md max-w-sm shadow-sm 2xl:max-w-sm font-14px" id="message-content">
-                                                    {{message.content}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center self-end justify-center text-gray-500 group/item" style="font-size: 10px" type="date" >
-                                            {{ message.timestamp}}
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                            } 
-                        }@else if (chatHistory.length == 0 && !hasHistory) {
-                            <div class=" absolute top-1/2 " style="justify-self: anchor-center">
-                                <span class="text-lg text-slate-400">{{'No Chat History' | translate}}</span>
-                            </div>
-                        }
-                        @else { <!-- Loading Spinner -->
-                            <div class=" absolute top-1/2 " style="justify-self: anchor-center">
-                                 <div class="inline-block size-8 border-2 rounded-full animate-spin border-l-transparent border-custom-500"></div>
-                            </div>
-                        }
-                    </ngx-simplebar>
+
+                <div class="relative mt-5">
+
+                  <input type="text"
+                    class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                    placeholder="Search for ..." autocomplete="off">
+
+                  <lucide-angular name="search"
+                    [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
+
                 </div>
-            </div>
-        </div><!--end-->
+
+              </div>
+
+              <p class="mx-5 mb-2 text-slate-500 dark:text-zink-200">Recent Find</p>
+
+              <ngx-simplebar class="max-h-[calc(100vh_-_410px)] xl:max-h-[calc(100vh_-_330px)]">
+                <ul class="flex flex-col gap-1">
+                  <li>
+
+                    <a href="javascript:void(0);"
+                      class="flex items-center gap-3 px-5 py-2.5 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 active">
+
+                      <div
+                        class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 size-7 dark:text-zink-200 shrink-0">
+
+                        <lucide-angular name="messages-square" [class]="'size-4'"></lucide-angular>
+
+                      </div>
+
+                      <h6 class="font-medium truncate grow">What is Tailwind CSS, and what is Utility-First CSS?</h6>
+
+                    </a>
+
+                  </li>
+                </ul>
+              </ngx-simplebar>
+
+            </mn-tab-pane>
+
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!--! MESSAGES -->
+    @if(showTab){
+    <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full hidden [&.show]:block [&.active]:xl:block active chat-content">
+      <div class="relative flex flex-col h-full">
+        <!--! header, btn profile, search -->
+        <div class="card-body">
+          <div class="flex items-center gap-3">
+            <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="flex items-center gap-3 ltr:mr-auto rtl:ml-auto shrink-0" id="userChatProfile">
+              <div class="size-10 h-10 rounded-full bg-slate-100 dark:bg-zink-600">
+                <img src="{{profile}}" alt="" class="h-10 rounded-full">
+              </div>
+
+              <ng-container *ngIf="user; else placeholderUser">
+                <div>
+                  <h6>{{ ((user.erpUser?.nombres ?? '') + ' ' + (user.erpUser?.apellidos ?? '')).trim() || 'Anonymus' }}</h6>
+
+                  <p class="text-sm text-slate-500 dark:text-zink-200">{{ role || 'None' }}</p>
+                </div>
+              </ng-container>
+
+              <ng-template #placeholderUser>
+                <div>
+                  <h6>Anonymus</h6>
+                  <p class="text-sm text-slate-500 dark:text-zink-200">None</p>
+                </div>
+              </ng-template>
+            </a>
+
+            <ul class="flex items-center">
+              <li>
+                <a (click)="toggleSearchChat()" href="javascript:void(0);" id="searchChatButton" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
+                  <lucide-angular name="search" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular>
+                </a>
+              </li>
+
+              <li class="hidden md:block">
+                <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
+                  <lucide-angular name="panel-right-open" class="size-4 mx-auto transition-all duration-200 ease-linear fill-slate-100 dark:fill-zink-600 dark:text-zink-200 text-slate-500 group-hover/item:text-custom-500 group-hover/item:fill-custom-100 dark:group-hover/item:fill-custom-500/20 dark:group-hover/item:text-custom-500 group-[.active]/item:hidden block"></lucide-angular>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
+          <div [class.hidden]="!showSearchChat" class="absolute inset-x-0 top-0 z-10 transition-all duration-200 ease-linear bg-white border-y border-slate-200 dark:bg-zink-700 dark:border-zink-500" id="searchChat">
+            <input type="text" class="w-full bg-slate-100 px-5 py-2 focus:outline-none" placeholder="Search ..." autocomplete="on">
+          </div>
+
+          <ngx-simplebar #messageScrollRef class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]">
+            <div *ngIf="isLoadingHistory" class="text-center py-2">
+              📥 Cargando mensajes…
+            </div>
+            <ul class="flex flex-col gap-5 list-none card-body">
+              <li
+                *ngFor="let msg of chatuser; let i = index"
+                class="flex chat-message group/item [&.right]:justify-end"
+                [ngClass]="msg.isSender ? 'right' : ''"
+              >
+                <div class="flex gap-3">
+                  <!-- Avatar -->
+                  <a href="javascript:void(0);"
+                    class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group-[.right]/item:order-3">
+                    <img [src]="msg.avatar" class="object-cover rounded-full h-9" />
+                  </a>
+
+                  <!-- Mensaje + herramientas -->
+                  <div class="grow group-[.right]/item:order-2 flex flex-col gap-3">
+                    <div class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none shadow-sm 2xl:max-w-sm">
+                      {{ msg.chatMsg }}
+
+                      <!-- Imagenes o archvios adjuntos -->
+                      <div *ngIf="msg.attachments?.length" class="grid grid-cols-2 gap-4 mt-4 2xl:grid-cols-3">
+                        <a *ngFor="let a of msg.attachments" href="javascript:void(0);">
+                          <img [src]="a" class="rounded-md" />
+                        </a>
+                      </div>
+
+                      <!-- Botón para desplegar las toolCalls, solo si existen -->
+                      <button *ngIf="!msg.isSender"
+                        (click)="msg.showTools = !msg.showTools"
+                        class="mt-2 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                        {{ msg.showTools ? 'Hidden data' : 'Show datta' }}
+                      </button>
+
+                      <!-- Listado de herramientas -->
+                      <div *ngIf="msg.showTools" class="mt-2 space-y-2">
+                        <div class="border border-slate-200 dark:border-zink-500 rounded p-2 bg-slate-50 dark:bg-zink-600 text-xs">
+                            <p class="mt-1"><strong>Input Tokens:</strong> {{ msg.inputTokens }}</p>
+                            <p class="mt-1"><strong>Output Tokens:</strong> {{ msg.outputTokens }}</p>
+                            <p class="mt-1"><strong>Total Tokens:</strong> {{ msg.totalTokens }}</p>
+                            <p class="mt-1"><strong>Metadata:</strong> {{ msg.metadata }}</p>
+                            <p class="mt-1"><strong>Model:</strong> {{ msg.model }}</p>
+                            <p class="mt-1"><strong>Prompt ID:</strong> {{ msg.promptId }}</p>
+                            <p class="mt-1"><strong>Prompt Var:</strong> {{ msg.promptVariables }}</p>
+                            <p class="mt-1"><strong>Prompt Version:</strong> {{ msg.promptVersion }}</p>
+                            <p class="mt-1"><strong>Response ID:</strong> {{ msg.responseId }}</p>
+                            <p class="mt-1"><strong>Previus Response ID:</strong> {{ msg.previousResponseId }}</p>
+                            <p class="mt-1"><strong>Create AT:</strong> {{ msg.createdAt }}</p>
+                            <p class="mt-1"><strong>Reasoning:</strong> {{ msg.reasoning }}</p>
+                        </div>
+
+                        <div *ngFor="let call of msg.toolCalls" class="border border-slate-200 dark:border-zink-500 rounded p-2 bg-slate-50 dark:bg-zink-600 text-xs">
+                          <p class="truncate"><strong>🛠️ Execute tool:</strong> {{ call.toolName }}</p>
+                          <p class="truncate"><strong>args:</strong> {{ call.arguments }}</p>
+                          <p class="mt-1"><strong>output:</strong> {{ call.output }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </ngx-simplebar>
+
+        </div>
+
+        <!--! type message, image, btn sned -->
+        <div class="card-body">
+          <form class="flex items-center gap-2">
+            <div class="grow">
+              <input type="text" id="inputText"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                placeholder="Type your message here ..." required autocomplete="off">
+            </div>
+
+            <div class="flex gap-2 shrink-0">
+              <button type="button"
+                class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular
+                  name="image" [class]="'size-4'"></lucide-angular></button>
+
+              <button type="button"
+                class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><lucide-angular
+                  name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span
+                  class="align-middle"> Send</span></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!--! IA MESSAGES -->
+    }@else {
+    <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full  [&.show]:block [&.active]:xl:block bot-content">
+      <div class="relative">
+
+        <ngx-simplebar class="h-[calc(100vh_-_320px)] xl:h-[calc(100vh_-_250px)]">
+
+          <div
+            class="sticky top-0 flex items-center gap-3 shadow-sm bg-white/60 dark:bg-zink-700/30 backdrop-blur-sm card-body">
+
+            <div
+              class="relative flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 dark:text-zink-200 dark:bg-zink-600">
+
+              <img src="assets/images/users/user-2.jpg" alt="" class="h-8 rounded-full">
+
+            </div>
+
+            <h6>What is Tailwind CSS, and what is Utility-First CSS?</h6>
+
+          </div>
+
+          <div class="flex gap-3 card-body bg-slate-50 dark:bg-zink-600">
+
+            <div
+              class="flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 shrink-0 dark:text-zink-200 dark:bg-zink-600">
+
+              <lucide-angular name="bot" class="size-5"></lucide-angular>
+
+            </div>
+
+            <div class="grow">
+
+              <p class="mb-2">Tailwind CSS is a <b>utility-first</b> CSS framework designed for rapid UI development.
+                Instead of providing pre-built components, it offers low-level utility classes that let you build custom
+                designs without ever leaving your HTML.</p>
+
+              <p class="mb-0">Utility-first CSS is an approach where you use small, single-purpose classes to build your
+                user interface. These utility classes are composed to create complex designs directly in the HTML,
+                rather than relying on custom CSS. This approach favors composition over inheritance, making it easier
+                to maintain and scale your codebase.</p>
+
+            </div>
+
+          </div>
+
+          <div
+            class="sticky top-0 flex items-center gap-3 shadow-sm bg-white/60 backdrop-blur-sm card-body dark:bg-zink-700/30">
+
+            <div
+              class="relative flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100">
+
+              <img src="assets/images/users/user-2.jpg" alt="" class="h-8 rounded-full">
+
+            </div>
+
+            <h6>How to install and set up Tailwind CSS in a project?</h6>
+
+          </div>
+
+          <div class="flex gap-3 card-body bg-slate-50 dark:bg-zink-600">
+
+            <div
+              class="flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 shrink-0 dark:text-zink-200 dark:bg-zink-600">
+
+              <lucide-angular name="bot" class="size-5"></lucide-angular>
+
+            </div>
+
+            <div class="grow">
+
+              <p class="mb-2">To install Tailwind CSS, you can use npm or yarn by running the following commands:</p>
+
+              <p class="mb-2">Using npm:</p>
+
+              <pre class="!mb-0"><code class="!mb-0 language-js">npm install tailwindcss</code></pre>
+
+              <p class="mt-4 mb-2">Using yarn:</p>
+
+              <pre class="!mb-0"><code class="!mb-0 language-js">yarn add tailwindcss</code></pre>
+
+              <p class="mt-4 mb-2">After installing, create a configuration file called <code
+                  class="text-xs text-pink-500 select-all">tailwind.config.js</code> in your project's root directory
+                using the following command:</p>
+
+              <pre class="!mb-0"><code class="!mb-0 language-js">npx tailwindcss init</code></pre>
+
+              <p class="mt-4 mb-2">In your project's CSS file, import Tailwind's base styles, components, and utilities
+                using the <code class="text-xs text-pink-500 select-all">&#64;import</code> directive:</p>
+
+              <pre class="!mb-0"><code class="!mb-0 language-css">&#64;import 'tailwindcss/base'; &#64;import 'tailwindcss/components'; &#64;import 'tailwindcss/utilities';</code></pre>
+
+            </div>
+
+          </div>
+
+        </ngx-simplebar>
+
+        <div class="card-body">
+
+          <div class="flex items-center gap-2">
+
+            <div class="grow">
+
+              <input type="text" id="inputText"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                placeholder="Type your message here ..." required autocomplete="off">
+
+            </div>
+
+            <div class="flex gap-2 shrink-0">
+
+              <button type="button"
+                class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular
+                  name="mic" [class]="'size-4'"></lucide-angular></button>
+
+              <button type="button"
+                class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><lucide-angular
+                  name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span
+                  class="align-middle">Send</span></button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    }
   </div>
 </div>
 
+<!--! Profile Drawer -->
+<drawer id="drawerEnd" [position]="'drawer-end'">
+    <div>
+        <div class="h-full p-4 overflow-y-auto">
+            <div>
+                <div class="flex items-center gap-3">
+                    <h6 class="text-15 grow">Profile</h6>
+                    <button dismissDrawer [DrawerDismiss]="'drawerEnd'" data-drawer-close=" drawerEnd" class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500"><lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular></button>
+                </div>
 
+                <div class="text-center">
+                    <div class=" size-20 mx-auto mt-8 rounded-full bg-slate-100 dark:bg-zink-600">
+                        <img src="{{profile}}" alt="" class="h-20 rounded-full">
+                    </div>
+                    <h5 class="mt-4 text-16">{{ ((user.erpUser?.nombres ?? '') + ' ' + (user.erpUser?.apellidos ?? '')).trim() || 'Anonymus' }}</h5>
+                    <p class="text-slate-500 dark:text-zink-200">{{role || 'None'}}</p>
+                </div>
+                  <div class="mt-5">
+                      <p class="mb-4 text-slate-500 dark:text-zink-200">Personal Information</p>
+                      <h6 class="mb-3 font-medium">
+                        <strong> Write from the number:</strong>
+                        <span class="align-middle"> {{user.whatsappPhone}} </span>
+                      </h6>
+                      <h6 class="mb-3 font-medium">
+                        <strong> Limit of questions per day:</strong>
+                         <span class="align-middle"> {{user.limitQuestions}} </span>
+                      </h6>
+                      <h6 class="mb-3 font-medium">
+                        <strong> first interaction:</strong>
+                        <span class="align-middle"> {{user.firstInteraction}} </span>
+                      </h6>
+                      <h6 class="mb-3 font-medium">
+                        <strong> Last interaction:</strong>
+                        <span class="align-middle"> {{user.lastInteraction}} </span>
+                      </h6>
+                      <h6 *ngIf="user.nextResetDate" class="mb-3 font-medium">
+                        <strong> Next question limit reset:</strong>
+                        <span class="align-middle"> {{user.nextResetDate}} </span>
+                      </h6>
+                      <h6 class="mb-3 font-medium">
+                        <strong> Strike Count:</strong>
+                        <span class="align-middle"> {{user.limitStrike}} </span>
+                      </h6>
+                      @if(user.block){
+                        <h6 class="mb-3 font-medium">
+                          <strong> Blocked:</strong>
+                          <span class="align-middle"> {{user.block}} </span>
+                        </h6>
+                        <h6 class="mb-3 font-medium">
+                          <strong> Reason for blocking:</strong>
+                          <span class="align-middle"> {{user.blockingReason}} </span>
+                        </h6>
+                      }
+                      <h6 class="mb-3 font-medium">
+                        <strong> Total messages to AI:</strong>
+                        <span class="align-middle"> {{user.validQuestionCount}} </span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> ERP code:</strong>
+                        <span class="align-middle"> {{user.erpUser?.codigoErp || 'None'}}</span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> Identification type:</strong>
+                        <span class="align-middle"> {{user.erpUser?.tipoIdentificacion || 'None'}}</span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> Official identification:</strong>
+                        <span class="align-middle"> {{user.erpUser?.identificacion || 'None'}}</span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> ERP cell phone number:</strong>
+                        <span class="align-middle"> {{user.erpUser?.numeroCelular || 'None'}}</span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> Institutional email:</strong>
+                        <span class="align-middle"> {{user.erpUser?.emailInstitucional || 'None'}}</span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> Personal email:</strong>
+                        <span class="align-middle"> {{user.erpUser?.emailPersonal || 'None'}}</span>
+                      </h6>
+                      <h6 class="font-medium">
+                        <strong> Sex:</strong>
+                        <span class="align-middle"> {{user.erpUser?.sexo || 'None'}}</span>
+                      </h6>
+                  </div>
+            </div>
+        </div>
+    </div>
+</drawer>

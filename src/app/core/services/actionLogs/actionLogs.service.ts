@@ -10,7 +10,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class ActionLogService {
 
-  private Url: String = environment.apiUrls.ucacue;
+  private Url: string = environment.apiUrls.ucacue ?? '';
 
   constructor(private http: HttpClient) { }
 
@@ -19,7 +19,7 @@ export class ActionLogService {
     return this.http.get<Acciones>(`${this.Url}/v2/audit/actions?${url}`);
   }
 
-    // obtener accion por id   
+  // obtener accion por id
   findAction(id: number): Observable <Accion>{
      return this.http.get<Accion>(`${this.Url}/v2/audit/actions/${id}`);
   }

@@ -130,7 +130,6 @@ export class WhatsAppUserTablesComponent implements OnInit {
         this.page = res.page?.number ?? 0;
         this.totalElements = res.page?.totalElements ?? 0;
         this.totalPages = res.page?.totalPages ?? 0;
-        console.log(this.userList)
 
         const allowedKeys = [
           'id',
@@ -298,7 +297,6 @@ export class WhatsAppUserTablesComponent implements OnInit {
         userId.block = isBlocked;
         userId.blockingReason = body.blockingReason;
         userId.limitStrike = body.limitStrike;
-        console.log('Actualizacion Exitosa: ', body)
       },
       error: (err) => {
         console.error('Error al cambiar el estado del usuario:', err);

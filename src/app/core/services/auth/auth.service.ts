@@ -4,6 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { JwtPayload } from '../../../models/JwtPayload';
+import { environment } from '../../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +14,7 @@ export class AuthService {
   private _jwtData: JwtPayload | null = null;
   private _token: string | null = null;
 
-  UrlAuth: string = 'http://localhost:8080/ucacue/auth';
+  UrlAuth: string = `${environment.apiUrls.ucacue_auth}/auth`;
 
   constructor(private http: HttpClient) {}
 

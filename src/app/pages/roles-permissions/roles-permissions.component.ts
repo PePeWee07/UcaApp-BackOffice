@@ -66,14 +66,14 @@ export class RolesPermissionsComponent {
 
   // parametros para actualizar la informacion del usuario
   roleForm = this.formBuilder.group({
-    rolesId: [[]] 
+    rolesId: [[]]
     }
   );
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       // Obtener los parametros de la ruta
-      this.id = params['id'];   
+      this.id = params['id'];
       if(this.id != undefined){
         this.getUser(this.id)
       }
@@ -87,7 +87,7 @@ export class RolesPermissionsComponent {
   withPermissions(permissions: string[]): boolean{
     return this.authService.includesPermission(permissions);
   }
-  // Obtener los menus 
+  // Obtener los menus
   getMenus(){
     this.menuItems = this.dashboardService.getDashboardMenu()
   }
@@ -96,9 +96,8 @@ export class RolesPermissionsComponent {
     this.rolesPrermissionsService.getUser(id).subscribe({
       next: (user) => {
         this.user = user!
-        console.log(this.user)
         // Obtener la informacion en keys values
-        this.User = Object.entries(this.user ?? {}).filter(([key,_]) => 
+        this.User = Object.entries(this.user ?? {}).filter(([key,_]) =>
           key !== 'name' &&
           key !== 'lastName' &&
           key !== 'enabled' &&
@@ -107,7 +106,7 @@ export class RolesPermissionsComponent {
           key != 'accountExpiryDate' &&
           key != 'credentialsNonExpired' &&
           key != 'roles' &&
-          key != 'authorities' 
+          key != 'authorities'
         ).map(([key, value]) => ({
           key: key === 'phoneNumber' ? 'phone number' : key,
           value: value
@@ -123,7 +122,6 @@ export class RolesPermissionsComponent {
     this.rolesPrermissionsService.getRoles().subscribe({
       next: (roles: Roles) => {
         this.roles = roles;
-        console.log(this.roles)
       },error: (err) => {
         console.log('Error al obtener la lista de roles: ', err);
       },
@@ -135,13 +133,12 @@ export class RolesPermissionsComponent {
       next: (permissions: PermissionList) => {
         this.permissions = permissions
         this.permissionsLen = this.permissions.at(-1).id
-        console.log(this.permissions)
       },error: (err) => {
         console.log('Error al obtener la lista de permisos: ', err);
       },
     })
   }
-  
+
   // HTML dynamico para cambiar el color en base al permiso
   getPermissionBadge(permission: string): SafeHtml{
       let badge = ``;
@@ -149,16 +146,16 @@ export class RolesPermissionsComponent {
         case 'DELETE':
           badge = `<p class=" text-sm dark:text-zink-200 border border-red-200 bg-red-100 text-red-500 dark:bg-red-500/20 w-fit text-center px-3 my-1 rounded-full"> ${permission} </p>`
           break;
-        case 'UPDATE': 
+        case 'UPDATE':
           badge =`<p class=" text-sm dark:text-zink-200 border border-yellow-200 bg-yellow-100 text-yellow-500 dark:bg-yellow-500/20 w-fit text-center px-3 my-1 rounded-full"> ${permission}</p>`
         break;
-        case 'READ': 
+        case 'READ':
           badge = `<p class="text-sm dark:text-zink-200 border border-sky-200 bg-sky-100 text-sky-500 dark:bg-sky-500/20 w-fit text-center px-3 my-1 rounded-full">${permission}</p>`
         break;
-        case 'WRITE': 
+        case 'WRITE':
           badge = `<p class="text-sm dark:text-zink-200 border border-green-200 bg-green-100 text-green-500 dark:bg-green-500/20 w-fit text-center px-3 my-1 rounded-full">${permission}</p>`
         break;
-        case 'CREATE': 
+        case 'CREATE':
           badge = `<p class="text-sm dark:text-zink-200 border border-purple-200 bg-purple-100 text-purple-500 dark:bg-purple-500/20 w-fit text-center px-3 my-1 rounded-full">${permission} </p>`
         break;
         default:
@@ -171,7 +168,6 @@ export class RolesPermissionsComponent {
   // Metodo para detectar cuando se selecciona un permiso
   onPermissionCheckboxChange(event: Event, name: string, id: number, selectedList: number[]) {
     let checked = (event.target as HTMLInputElement).checked;
-    console.log((event.target as HTMLInputElement).checked)
 
     if (checked) {
       if (!selectedList.includes(id)) {
@@ -189,9 +185,7 @@ export class RolesPermissionsComponent {
   }
   // Metodo para detectar cuando se selecciona un rol
   onRoleCheckboxChange(event: Event, name: string, id: number, selectedList: number[]) {
-      console.log('change fired')
       let checked = (event.target as HTMLInputElement).checked;
-      console.log((event.target as HTMLInputElement).checked)
 
       if (checked) {
         if (!selectedList.includes(id)) {
@@ -208,8 +202,6 @@ export class RolesPermissionsComponent {
 
   // Metodo para actulizar los roles del usuario
   updateUserRole(userId: number) {
-    console.log('change fired')
-    console.log('Selected Role IDs:', this.selectedRoles);
     const body = {
       "enabled": true,
       "accountNonExpired": true,
@@ -217,11 +209,8 @@ export class RolesPermissionsComponent {
       "credentialsNonExpired": true,
       "rolesIds": this.selectedRoles
     }
-    console.log(body)
-    console.log(this.newPermissions)
     this.rolesPrermissionsService.editUser(userId, body).subscribe({
         next: (data) => {
-          console.log('Actualizacion Exitosa: ', body, data)
           this.getUser(userId);
         },
           error: (err) => {
@@ -239,12 +228,10 @@ export class RolesPermissionsComponent {
         "id": this.roles.at(-1).id!+1,
         "name": trimmed,
         "permissionsIds": this.selectedPermissions
-      }     
+      }
     }
-    console.log(body)
     this.rolesPrermissionsService.createRole(body).subscribe({
         next: (data) => {
-          console.log('Actualizacion Exitosa: ', body, data)
           this.alertToastService.showToast('success', 'New Role Added', 1500);
           this.getRoles();
         },
@@ -260,7 +247,6 @@ export class RolesPermissionsComponent {
   deleteRol(id: number){
     this.rolesPrermissionsService.deleteRole(id).subscribe({
       next: (data) => {
-        console.log('Rol Eliminado: ', data)
         this.alertToastService.showToast('success', 'Role Deleted', 1500);
         this.getRoles();
       },
@@ -272,14 +258,12 @@ export class RolesPermissionsComponent {
 
   // Metodo para actualizr los permissos de un rol
   updateRole(roleId: number){
-    console.log(this.selectedRole)
     let body = {
         "permissionsIds": this.selectedPermissions
-    }  
-    
+    }
+
     this.rolesPrermissionsService.updateRole(roleId, body).subscribe({
       next: (data) => {
-        console.log('Rol Actualizado: ', data)
         this.alertToastService.showToast('success', 'Role Updated', 1500);
         this.getRoles();
       },
@@ -300,12 +284,10 @@ export class RolesPermissionsComponent {
       body = {
         "id": this.permissionsLen!+1,
         "name": trimmed
-      }     
+      }
     }
-      console.log(body)
       this.rolesPrermissionsService.createPermission(body).subscribe({
         next: (data) => {
-          console.log('Actualizacion Exitosa: ', body, data)
           this.alertToastService.showToast('success', 'Role Created', 1500);
           this.getPermissions();
         },
@@ -379,7 +361,7 @@ export class RolesPermissionsComponent {
       { name: 'Open Chat sessions', permissions: ['READ'] }
     ]
   }
-  ];  
+  ];
 
   selected(selected: string){
     let count = -1;

@@ -26,7 +26,7 @@ export class ProfileComponent {
   constructor(
       private profileService: ProfileService,
       private authService: AuthService,
-      private sanitizer: DomSanitizer, 
+      private sanitizer: DomSanitizer,
       private formBuilder: FormBuilder,
           @Inject(AlertToastService) private alertToast: AlertToastService
       , public translate: TranslateService
@@ -63,7 +63,7 @@ export class ProfileComponent {
       next: (profile: UserProfile) => {
         this.profileInfo = profile;
 
-        this.profileInfo.roles?.forEach((role: any) => 
+        this.profileInfo.roles?.forEach((role: any) =>
           {if(role.permissionList){
             this.permissions.push(role.permissionList)
             this.permissions = this.permissions?.flatMap((permission: PermissionList) => permission);
@@ -75,9 +75,9 @@ export class ProfileComponent {
 
         this.profileKeys = Object.keys(this.profileInfo).map((key) =>
           key === 'phoneNumber' ? 'phone number' : key &&
-          key === 'lastName' ? 'last name' : key 
+          key === 'lastName' ? 'last name' : key
         )
-      
+
 
       },error(err) {
         console.log('No se pudo obtener perfil', err)
@@ -91,7 +91,7 @@ export class ProfileComponent {
     const confirm = form.get('passwordConfirmation')?.value;
     return password === confirm ? null : { passwordMismatch: true };
   }
-  
+
   updateProfile(){
     const formData: any = this.profileForm.value;
 
@@ -103,7 +103,6 @@ export class ProfileComponent {
         filteredData[key] = value;
       }
     }
-    console.log(filteredData)
     const body = filteredData
 
     this.profileService.editProfile(body).subscribe({
@@ -124,22 +123,22 @@ export class ProfileComponent {
                   ${permission}
                 </p>`
         break;
-      case 'UPDATE': 
+      case 'UPDATE':
         badge =`<p class="dark:text-zink-200 border border-yellow-200 bg-yellow-100 text-yellow-500 dark:bg-yellow-500/20 w-fit text-center px-3 my-1 rounded-full">
                   ${permission}
                 </p>`
       break;
-      case 'READ': 
+      case 'READ':
         badge = `<p class=" dark:text-zink-200 border border-sky-200 bg-sky-100 text-sky-500 dark:bg-sky-500/20 w-fit text-center px-3 my-1 rounded-full">
                   ${permission}
                 </p>`
       break;
-      case 'WRITE': 
+      case 'WRITE':
         badge = `<p class=" dark:text-zink-200 border border-green-200 bg-green-100 text-green-500 dark:bg-green-500/20 w-fit text-center px-3 my-1 rounded-full">
                   ${permission}
                 </p>`
       break;
-      case 'CREATE': 
+      case 'CREATE':
         badge = `<p class=" dark:text-zink-200 border border-purple-200 bg-purple-100 text-purple-500 dark:bg-purple-500/20 w-fit text-center px-3 my-1 rounded-full">
                   ${permission}
                 </p>`

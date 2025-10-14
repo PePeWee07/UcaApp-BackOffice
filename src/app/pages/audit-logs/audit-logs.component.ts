@@ -29,7 +29,7 @@ export class AuditLogsComponent {
     private actionLogService: ActionLogService,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer, 
+    private sanitizer: DomSanitizer,
     @Inject(AlertToastService) private alertToast: AlertToastService,
     public translate: TranslateService
   ) { translate.setDefaultLang('en'); }
@@ -69,7 +69,7 @@ export class AuditLogsComponent {
   changedFields: ({ key: string; value: unknown; })[] = [];
   totalActions: number = 0;
 
-  
+
   ngOnInit(): void {
     this.searchParam.pipe(debounceTime(300)).subscribe(() => {
       if(this.searchText != ''){
@@ -93,14 +93,14 @@ export class AuditLogsComponent {
   onSearch(event: KeyboardEvent){
     this.searchParam.next((event.target as HTMLInputElement).value); // Emitir el valor de búsqueda
   }
-  
+
   // Obtener todos los logs de auditoria
   getActions(){
     this.listStartDate = undefined;
     this.listEndDate = undefined;
     this.tableName = '';
     this.actionLogService.getActions(this.url).subscribe({
-      next: (res: Acciones) => { 
+      next: (res: Acciones) => {
         this.allAudits = res.content;
         this.audits = this.allAudits
 
@@ -112,7 +112,7 @@ export class AuditLogsComponent {
         this.generatePagesArray(this.page, this.totalPages);
 
         // Filtrar las llaves que se veran en la tabla
-        this.tableKeys = Object.keys(this.allAudits[0]).filter((key: string) => 
+        this.tableKeys = Object.keys(this.allAudits[0]).filter((key: string) =>
           key != "action_tstamp_stm" &&
           key != "action_tstamp_clk"  &&
           key != "row_data"  &&
@@ -120,7 +120,7 @@ export class AuditLogsComponent {
           key != "schema_name"  &&
           key != "client_port"  &&
           key != "statement_only"  &&
-          key != "session_user_name" 
+          key != "session_user_name"
         ).map((key) =>
           key === 'action_tstamp_tx' ? 'Timestamp' : key
         )
@@ -155,7 +155,7 @@ export class AuditLogsComponent {
         this.totalPages = actions.totalPages;
         this.numberOfElements = actions.numberOfElements;
         this.generatePagesArray(this.page, this.totalPages);
-        
+
       },
       error: (err) => {
         console.error('Failed to fetch actions:', err);
@@ -164,7 +164,7 @@ export class AuditLogsComponent {
   }
 
   // llamar al metodo cuando el usuario ponga una fecha
-  onListDateChange() {  
+  onListDateChange() {
     if(this.listStartDate  && this.listEndDate ){
       console.log('list start date: ', this.listStartDate, 'list end date: ', this.listEndDate);
       this.findActionsByDate(this.listStartDate, this.listEndDate);
@@ -195,7 +195,7 @@ export class AuditLogsComponent {
           console.log('Error al obtener busqueda: ', err);
         },
       })
-  
+
   }
   // Metodo para buscar auditoria por id
   idSearch(id: number){
@@ -223,7 +223,7 @@ export class AuditLogsComponent {
   openDetails(id: number){
     this.selectAudit = this.selectAudit === id ? -1 : id;
     this.getAuditDetails(id)
-  } 
+  }
 
   // Metodo para obetner los detalles de log
   getAuditDetails(id: number){
@@ -258,7 +258,7 @@ export class AuditLogsComponent {
         this.audits = [];
         this.audits.push(log)
         this.auditDetails = log;
-        
+
         this.page = 0;
         this.totalElements = 1;
         this.totalPages = 1;
@@ -331,7 +331,6 @@ export class AuditLogsComponent {
       }else if(this.tableName){
         this.getTable(this.tableName)
       }else if(this.searchText){
-        console.log(this.searchText)
         this.globalSearch(this.searchText)
       }else{
         this.getActions();
@@ -346,15 +345,13 @@ export class AuditLogsComponent {
     }else if(this.tableName){
       this.getTable(this.tableName)
     }else if(this.searchText){
-      console.log(this.searchText)
-      console.log(this.page)
         this.globalSearch(this.searchText)
     }else{
       this.getActions();
     }
   }
 
-  
+
   // Método para generar el array de páginas para la paginación
   generatePagesArray(currentPage: number, totalPages: number): void {
     const pages: number [] = [];
@@ -459,7 +456,7 @@ export class AuditLogsComponent {
         return "";
     }
   }
-  
+
   // Metodo para obetener la accion a classes CSS
   getAction(action: string ): string {
     action = this.nameAction(action);

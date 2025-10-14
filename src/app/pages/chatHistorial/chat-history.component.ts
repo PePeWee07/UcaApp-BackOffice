@@ -108,7 +108,8 @@ export class ChatHistoryComponent {
   // Var de un usario
   user: Content = {};
   role: string = '';
-  profile: string = '../../../assets/images/users/user-dummy-img.jpg';
+  profile: string = './assets/images/users/user-dummy-img.jpg';
+
 
   // Var buscar usaurio
   searchField : 'identificacion' | 'whatsappPhone' = 'identificacion';

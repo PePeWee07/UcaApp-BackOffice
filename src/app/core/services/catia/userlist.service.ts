@@ -1,10 +1,10 @@
-import { HistoryChat } from './../../../models/models_assistantVirtual/HistoryChat';
+import { HistoryChat } from '../../../models/catia/HistoryChat';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { WhatsAppUserList } from '../../../models/models_assistantVirtual/WhatsAppUserList';
-import { Observable, } from 'rxjs';
+import { WhatsAppUserList } from '../../../models/catia/WhatsAppUserList';
+import { map, Observable, } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { WhatsAppUser } from '../../../models/models_assistantVirtual/WhatsAppUser';
+import { WhatsAppUser } from '../../../models/catia/WhatsAppUser';
 
 @Injectable({
   providedIn: 'root'

@@ -1,4 +1,9 @@
 <div class="py-1">
+  <div>
+      <p>Phone: {{ phone }}</p>
+      <p>Nuevos: {{ pending }}</p>
+    </div>
+
   <!-- Title -->
   <div>
     <h2 class="text-2xl font-semibold leading-tight mb-5 text-blue-600">{{'Chat User List' | translate}}</h2>
@@ -132,7 +137,7 @@
     <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
 
       <table mat-table class="min-w-full leading-normal ">
-        
+
         <thead>
           <tr>
             @for (key of tableKeys; track $index) {

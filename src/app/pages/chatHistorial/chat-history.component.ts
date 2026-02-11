@@ -1,16 +1,16 @@
+import { ApiWhatsAppService } from './../../core/services/catia/apiWhatsApp.service';
 import {
   WhatsAppUserList,
   Content,
   RolesUsuario,
-} from '../../models/models_assistantVirtual/WhatsAppUserList';
+} from '../../models/catia/WhatsAppUserList';
+import { MessageBody } from './../../models/catia/whatsapp/MessageBody';
 import { AlertToastService } from '../../core/services/component/alert-toast.service';
 import { MDModalModule } from '../../component/modals';
 import { DrawerModule } from '../../component/drawer';
-import { AuthService } from '../../core/services/auth/auth.service';
-import { UserListService } from '../../core/services/virtualAssistant/userlist.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
-import { Component, ViewChild, Inject, ElementRef } from '@angular/core';
+import { Component, ViewChild, Inject, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { NavModule } from '../../component/tab/tab.module';
@@ -20,7 +20,6 @@ import {
   LucideIconProvider,
   icons,
 } from 'lucide-angular';
-import { MnDropdownComponent } from '../../component/dropdown/dropdown.component';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
@@ -28,9 +27,12 @@ import {
 } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { fromEvent, Subject } from 'rxjs';
+import { fromEvent, Observable, Subject } from 'rxjs';
 import { auditTime, debounceTime, distinctUntilChanged, filter, takeUntil } from 'rxjs/operators';
 import { FlatpickrModule } from '../../component/flatpickr/flatpickr.module';;
+import { UserListService } from '../../core/services/catia/userlist.service';
+import { TemplatesWhatsAppService } from '../../core/services/catia/templatesWhatsApp.service';
+// import { MnDropdownComponent } from '../../component/dropdown/dropdown.component';
 
 import { contact } from '../../data/chat'; //! Data of expample
 @Component({
@@ -43,7 +45,7 @@ import { contact } from '../../data/chat'; //! Data of expample
     LucideAngularModule,
     DrawerModule,
     MDModalModule,
-    MnDropdownComponent,
+    // MnDropdownComponent,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
@@ -62,9 +64,11 @@ import { contact } from '../../data/chat'; //! Data of expample
   ],
 })
 export class ChatHistoryComponent {
+
   constructor(
     private userListService: UserListService,
-    private authService: AuthService,
+    private templatesWhatsAppService: TemplatesWhatsAppService,
+    private apiWhatsAppService: ApiWhatsAppService,
     public translate: TranslateService,
     public formBuilder: UntypedFormBuilder,
     @Inject(AlertToastService) private alertToast: AlertToastService
@@ -73,10 +77,6 @@ export class ChatHistoryComponent {
   }
 
   contacts: any; //! Variable por eliminar
-
-  messageSave() {
-    // TODO: Implementar la lógica para enviar un mensaje al usuario
-  }
 
   ngOnInit(): void {
     // Dejar de escribir 2s, dispara executeSearch()
@@ -87,6 +87,8 @@ export class ChatHistoryComponent {
       takeUntil(this.destroy$)
     ).subscribe(() => this.executeSearch());
     this.contacts = contact;
+
+    this.loadtemplates();
   }
 
   // Var Paginacion de Usuarios recientes
@@ -121,13 +123,6 @@ export class ChatHistoryComponent {
   // Var Ocultables
   showTab: boolean = true;
   showSearchChat: boolean = false;
-
-
-  //! NEW
-
-
-
-
 
   // Scroll al final del historial
   private scrollToBottom() {
@@ -421,6 +416,46 @@ export class ChatHistoryComponent {
   // Togle Tab Search Chat
   toggleSearchChat(): void {
     this.showSearchChat = !this.showSearchChat;
+  }
+
+  // Templates
+  feedbackList: any[] = [];
+  loadtemplates() {
+    this.templatesWhatsAppService.getCalificationTemplates(0).subscribe({
+      next: (res) => {
+        this.feedbackList = res.content;
+      },
+      error: (err) => console.error('Error cargando feedback', err),
+    });
+  }
+
+  // Enviar Mensaje WhatsApp
+  msgToUser: string = "";
+  sendMessage() {
+    this.user.whatsappPhone;
+    if (this.msgToUser && this.msgToUser.trim() !== '' && this.user.whatsappPhone) {
+
+      console.log('Mensaje enviado:', this.msgToUser);
+      const messageBody: MessageBody = {
+        number: this.user.whatsappPhone,
+        message: this.msgToUser.trim()
+      };
+
+      this.apiWhatsAppService.sendWhatsAppMessage(messageBody).subscribe({
+        next: (res) => {
+          this.alertToast.showToast('success', 'Mensaje enviado', 1500);
+        },
+        error: (err) => {
+          this.alertToast.showToast('error', 'Failed to send message', 3000);
+          console.error('Error al enviar mensaje:', err);
+        }
+      });
+
+      this.msgToUser = "";
+    } else {
+      this.alertToast.showToast('warning', 'Ingrese un mensaje válido', 2000);
+      this.msgToUser = "";
+    }
   }
 
   // Limpiar recursos al destruir el componente
